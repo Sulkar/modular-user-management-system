@@ -6,14 +6,14 @@ services:
             - "80:80"
         volumes:
             - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
-            - ./app:/app
+            - ./www:/www
     php:
         build:
             context: .
             dockerfile: PHP.Dockerfile
         volumes:
-            - ./app:/app
-    mysql:
+            - ./www:/www
+    docker-mysql:
         image: mariadb:latest
         environment:
             MYSQL_ROOT_PASSWORD: 'secret'
