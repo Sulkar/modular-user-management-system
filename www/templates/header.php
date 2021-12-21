@@ -1,3 +1,17 @@
+<?php
+    // Initialize the session
+    session_start();
+    
+    // Check if the user is already logged in, if yes then redirect him to welcome page
+    if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+        //exit;
+    }else{
+        // Include login file
+        require_once "./db/login.php";
+    }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -68,10 +82,10 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-2 mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#">Editor</a>
+                        <a class="nav-link" aria-current="page" href="https://editor.sqlverine.org/">Editor</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Autorenwerkzeug</a>
+                        <a class="nav-link" href="https://author.sqlverine.org/">Autorenwerkzeug</a>
                     </li>
 
                 </ul>
@@ -80,9 +94,10 @@
                     <div class="input-group me-2">
                         <input type="text" class="form-control" placeholder="Code" aria-label="Recipient's username"
                             aria-describedby="button-addon2" style="width:80px; height:30px">
-                        <button class="btn btn-outline-secondary" type="button" id="button-addon2" style="height:30px">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="width: 20px; vertical-align: top;"
-                                class="bi bi-search" viewBox="0 0 16 16">
+                        <button class="btn btn-outline-secondary py-1" type="button" id="button-addon2"
+                            style="height:30px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                style="width: 20px; vertical-align: top;" class="bi bi-search" viewBox="0 0 16 16">
                                 <path
                                     d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                             </svg>
@@ -90,9 +105,9 @@
                     </div>
 
                 </form>
-           
 
-            
+
+
                 <ul class="navbar-nav me-2 mb-2 mb-md-0">
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="#">Service</a>
@@ -100,9 +115,47 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Idee</a>
                     </li>
+                    <li class="nav-item">
+                        <?php if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){ ?>
+                            <a class="nav-link" id="btnProfil" href="#">Profil</a>
+                        <?php } else { ?>
+                        <a class="nav-link" id="btnLogin" href="#loginForm" role="button">
+                            Anmelden
+                        </a>
+                        <?php } ?>
+                    </li>
+
 
                 </ul>
-                
+
             </div>
         </div>
     </nav>
+
+    <?php 
+        if(!empty($login_err)){
+            echo '<div class="alert alert-danger text-center my-0" role="alert" style="">' . $login_err . '</div>';
+        }        
+        ?>
+
+    <!-- Login Form Popover -->
+    <div id="loginForm" class="d-none" style="">
+        <form class="form-inline text-center" role="form" action="<?php echo './'; ?>"
+            method="post">
+            <div class="form-group">
+                <input placeholder="Benutzername" class="form-control mb-1" type="" name="username">
+                <input placeholder="Passwort" class="form-control mb-1" minlength="6" type="password" name="password">
+                <button type="submit" class="btn btn-primary" id="loginButton">Login</button>
+            </div>
+        </form>
+    </div>
+    <!-- Login Form Popover -->
+    <div id="profilForm" class="d-none" style="">
+        <form class="form-inline text-center" role="form" action="./db/logout.php" method="post">
+            <div class="form-group">     
+                <p><a href="#" id="uploadDbButton">Datenbank hochladen</a></p>  
+                        
+                <button type="submit"  class="btn btn-primary" id="logoutButton">Logout</button>
+            </div>
+        </form>
+    </div>
