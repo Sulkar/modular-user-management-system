@@ -22,30 +22,15 @@
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="/css/index.css" rel="stylesheet">
     <style>
-        body {
-            padding-top: 3.5rem;
-        }
-
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
-
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
-        }
+       
     </style>
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light" style="background-color: white;">
+    <nav class="navbar navbar-expand-md navbar-light fixed-top" style="background-color: white;">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
                 <!-- <img src="/images/SQLverine.svg" alt="My Site Logo" class="themedImage_1VuW themedImage--light_3UqQ navbar__logo"> -->
@@ -82,10 +67,11 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-2 mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="https://editor.sqlverine.org/">Editor</a>
+                        <a class="nav-link text-dark" aria-current="page"
+                            href="https://editor.sqlverine.org/">Editor</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="https://author.sqlverine.org/">Autorenwerkzeug</a>
+                        <a class="nav-link text-dark" href="https://author.sqlverine.org/">Autorenwerkzeug</a>
                     </li>
 
                 </ul>
@@ -110,16 +96,16 @@
 
                 <ul class="navbar-nav me-2 mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#">Service</a>
+                        <a class="nav-link text-dark" aria-current="page" href="#">Service</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Idee</a>
+                        <a class="nav-link text-dark" href="#">Idee</a>
                     </li>
                     <li class="nav-item">
                         <?php if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){ ?>
-                            <a class="nav-link" id="btnProfil" href="#">Profil</a>
+                        <a class="nav-link text-dark" id="btnProfil" href="#">Profil</a>
                         <?php } else { ?>
-                        <a class="nav-link" id="btnLogin" href="#loginForm" role="button">
+                        <a class="nav-link text-dark" id="btnLogin" href="#loginForm" role="button">
                             Anmelden
                         </a>
                         <?php } ?>
@@ -140,22 +126,21 @@
 
     <!-- Login Form Popover -->
     <div id="loginForm" class="d-none" style="">
-        <form class="form-inline text-center" role="form" action="<?php echo './'; ?>"
-            method="post">
+        <form class="form-inline text-center" role="form" action="<?php echo './'; ?>" method="post">
             <div class="form-group">
                 <input placeholder="Benutzername" class="form-control mb-1" type="" name="username">
                 <input placeholder="Passwort" class="form-control mb-1" minlength="6" type="password" name="password">
-                <button type="submit" class="btn btn-primary" id="loginButton">Login</button>
+                <button type="submit" class="btn btn-secondary" id="loginButton">Login</button>
             </div>
         </form>
     </div>
     <!-- Login Form Popover -->
     <div id="profilForm" class="d-none" style="">
         <form class="form-inline text-center" role="form" action="./db/logout.php" method="post">
-            <div class="form-group">     
-                <p><a href="#" id="uploadDbButton">Datenbank hochladen</a></p>  
-                        
-                <button type="submit"  class="btn btn-primary" id="logoutButton">Logout</button>
+            <div class="form-group">
+                <p><a href="#" id="uploadDbButton">Datenbank hochladen</a></p>
+
+                <button type="submit" class="btn btn-secondary" id="logoutButton">Logout</button>
             </div>
         </form>
     </div>
