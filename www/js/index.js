@@ -1,19 +1,12 @@
+let data = {
+  key: "value",
+};
 
-
-//popover login profil
-const buttonLogin = document.getElementById('btnLogin');
-const buttonProfil = document.getElementById('btnProfil');
-
-if (buttonLogin != undefined) {
-    const optionsButtonLogin = {};
-    optionsButtonLogin.content = document.getElementById('loginForm').innerHTML;
-    optionsButtonLogin.html = true;
-    optionsButtonLogin.sanitize = false;
-    new bootstrap.Popover(buttonLogin, optionsButtonLogin);
-}else{
-    const optionsButtonProfil = {};
-    optionsButtonProfil.content = document.getElementById('profilForm').innerHTML;
-    optionsButtonProfil.html = true;
-    optionsButtonProfil.sanitize = false;
-    new bootstrap.Popover(buttonProfil, optionsButtonProfil);
+function updateProfile() {
+  fetch("./db/db_profile_update.php", {
+    method: "post",
+    body: JSON.stringify(data),
+  }).then((data) => {
+    // data is anything returned by your API/backend code
+  });
 }

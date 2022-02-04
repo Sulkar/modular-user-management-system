@@ -4,6 +4,9 @@
 // Include config file
 require_once "config.php";
  
+// reset infos
+$_SESSION["last_result"] = $_SESSION["last_error"] = "";
+
 // Define variables and initialize with empty values
 $username = $password = "";
 $username_err = $password_err = $login_err = "";
@@ -46,27 +49,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         $username = $row["username"];
                         $hashed_password = $row["password"];
                         if(password_verify($password, $hashed_password)){
-                            // Password is correct, so start a new session
-                            //session_start();
                             
                             // Store data in session variables
                             $_SESSION["loggedin"] = true;
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;                            
-                            
-                            // Redirect user to welcome page
-                            //header("location: welcome.php");
+
                         } else{
                             // Password is not valid, display a generic error message
-                            $login_err = "Benutzername oder Password ist falsch!";
+                            $login_err = "Username or Password are incorrect.";
                         }
                     }
                 } else{
                     // Username doesn't exist, display a generic error message
-                    $login_err = "Benutzername oder Password ist falsch!";
+                    $login_err = "Username or Password are incorrect.";
                 }
             } else{
-                echo "Oops! Something went wrong. Please try again later.";
+                $login_err = "Username or Password are incorrect.";
             }
 
             // Close statement

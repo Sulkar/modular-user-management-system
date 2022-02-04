@@ -1,44 +1,41 @@
-<div class="container-fluid ">
-    <footer class="row pt-5 pb-3 my-3 border-top" style="background-color: #708090; color: white;">
+
+<footer class="footer mt-auto py-3" style="background-color: #708090; color: white;">
+  <div class="container">
+    
+
+
+
         <div class="row">
 
             <div class="col-md-4">
-                <h5>Dokumentation</h5>
+                <h5>Docs</h5>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Home</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Features</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Pricing</a></li>
-
                 </ul>
             </div>
 
             <div class="col-md-4">
-                <h5>Weiteres</h5>
+                <h5>About</h5>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Home</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Features</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Pricing</a></li>
-
                 </ul>
             </div>
 
             <div class="col-md-4">
-                <h5>Rechtliches</h5>
+                <h5>...</h5>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Home</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Features</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Pricing</a></li>
-
                 </ul>
             </div>
         </div>
         <div class="row row-cols-1  py-3">
             <div class="col-md text-center">
-                Copyright © 2021 SQLverine
+                Copyright © 20...
             </div>
         </div>
     </footer>
-</div>
+  </div>
+</footer>
 
 
 <!-- JavaScript Bundle with Popper -->
