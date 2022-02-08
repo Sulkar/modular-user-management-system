@@ -1,114 +1,40 @@
 /**
- *  Main Javascript, available from all files
+ *  Startpage Javascript
  */
 
-// header error DIV
-function showError(message) {
-  let errorDiv = document.getElementById("head_error");
-  errorDiv.classList.remove("d-none");
-  errorDiv.innerHTML = message;
-  hideSuccess();
-}
-function hideError() {
-  let errorDiv = document.getElementById("head_error");
-  errorDiv.classList.add("d-none");
-}
-// header success DIV
-function showSuccess(message) {
-  let errorDiv = document.getElementById("head_success");
-  errorDiv.classList.remove("d-none");
-  errorDiv.innerHTML = message;
-  hideError();
-}
-function hideSuccess() {
-  let errorDiv = document.getElementById("head_success");
-  errorDiv.classList.add("d-none");
-}
-// universal CRUD function
-async function databaseCRUD(data) {
-  return fetch("./db/db_CRUD.php", {
-    method: "post",
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      return data;
-    })
-    .catch(function (error) {
-      return error;
-    });
-}
-
-
-
-
-
-
-
-
-/*
-  TESTS 
-*/
-let data1 = {
-  table: "users",
-  fields: ["username", "email"],
-  values: [
-    ["richi", "richi@gmail.com"],
-    ["simi", "simi@gmail.com"],
-  ],
-};
-
-let phpFile = "./db/db_update.php";
-
-// database custom query CRUD
-
-let data2 = {
-  sqlQuery: "SELECT * FROM users",
-  sqlValues: [],
-};
-
-let data = {
-  sqlQuery:
-    "INSERT INTO schueler_essen(schueler_id, essen_id, tag) VALUES(:schueler_id, :essen_id, :tag) ON DUPLICATE KEY UPDATE schueler_id = :schueler_id, essen_id = :essen_id, tag = :tag",
-  sqlValues: [
-    [
-      [":schueler_id", 1],
-      [":essen_id", 12001],
-      [":tag", "02-08-2022"],
-    ],
-    [
-      [":schueler_id", 31],
-      [":essen_id", 1201],
-      [":tag", "02-08-2022"],
-    ],
-    [
-      [":schueler_id", 22],
-      [":essen_id", 1201],
-      [":tag", "02-08-2022"],
-    ],
-    [
-      [":schueler_id", 31],
-      [":essen_id", 1201],
-      [":tag", "02-06-2022"],
-    ],
-    [
-      [":schueler_id", 22],
-      [":essen_id", 1201],
-      [":tag", "02-06-2022"],
-    ],
-  ],
-};
+//create Database Table "users" Button
+document
+  .getElementById("btnCreateDbTable")
+  .addEventListener("click", function () {
+    let createUsersTableData = {
+      sqlQuery:
+        "CREATE TABLE users ( id int NOT NULL AUTO_INCREMENT PRIMARY KEY, username varchar(100), password varchar(100), email varchar(100) )",
+      sqlValues: [],
+    };
+    let insertAdminAccountData = {
+      sqlQuery:
+        "INSERT INTO users (username, password, email) VALUES ('admin', '$2y$10$oVTOgeJfF0jZTaoDQia9jeZ8GPS78kHgje6fEmF4CcnXjTxOomRem', 'admin@example.com')",
+      sqlValues: [],
+    };
+    //create table users
+    (async () => {
+      let data = await databaseCRUD(createUsersTableData);
+      console.log(data);
+      if (data["error"] == "") {
+        //create admin/admin account
+        (async () => {
+          let data = await databaseCRUD(insertAdminAccountData);
+          console.log(data);
+          if (data["error"] == "") {
+            showSuccess("Created table users and admin/admin account.");
+          } else {
+            showError(data["error"]["errorInfo"]);
+          }
+        })();
+      } else {
+        showError(data["error"]["errorInfo"]);
+      }
+    })();
+  });
 
 // START
-
-document.getElementById("btnTest").addEventListener("click", function () {
-  console.log("hlello");
-
-  (async () => {
-    console.log(await databaseCRUD(data2));
-  })();
-
-  console.log("ddd");
-});

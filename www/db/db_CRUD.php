@@ -62,7 +62,7 @@ try {
         $stmt->execute();
     }
 
-    $results["result"] = $stmt->fetchAll();
+    $results["result"] = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $results["inserted"] = true;
 } catch (Exception $exception) {
     $results["error"] = $exception;

@@ -59,11 +59,12 @@
 
 
                 <ul class="navbar-nav me-2 mb-2 mb-md-0">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" aria-current="page" href="#">Service</a>
-                    </li>
-
                     <?php if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" aria-current="page" href="./data.php">Data</a>
+                        </li>
+
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
