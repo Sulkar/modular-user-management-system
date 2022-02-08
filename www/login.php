@@ -1,19 +1,19 @@
 <?php
-    require_once('./templates/Template.php');
+/*
+    Page: Login
+*/
+require_once('./templates/Template.php');
 
-    $tpl = new Template( './templates/' );
+// Initialize the session
+session_start();
 
-    print $tpl->render( 'header', array(
-        'myNumber' => 55,
-        'myString' => 'Richi'
-    ));
-
-    print $tpl->render( 'tmp-login', array(
-        'myNumber' => 55,
-        'myString' => 'Richi'
-    ));
-
-    print $tpl->render( 'footer', array(
-        'myNumber' => 55,
-        'myString' => 'Richi'
-    ));
+// Templates
+$tpl = new Template('./templates/');
+// Header
+print $tpl->render('tmp-header', array());
+// Body
+print $tpl->render('tmp-login', array());
+// Footer
+print $tpl->render('tmp-footer', array(
+    'page_javascript' => '/js/login.js'
+));

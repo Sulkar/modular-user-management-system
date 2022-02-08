@@ -73,7 +73,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="./profile.php">Profile</a></li>
-                                <li><a class="dropdown-item" href="./db/logout.php">Logout</a></li>
+                                <li><a class="dropdown-item" href="./db/db_logout.php">Logout</a></li>
 
                             </ul>
                         </li>
@@ -92,13 +92,8 @@
 
             </div>
         </div>
+
     </nav>
 
-    <?php
-    if (!empty($db_error)) {
-        echo '<div class="alert alert-danger text-center my-0" role="alert" style="">' . $db_error . '</div>';
-    }
-    if (!empty($db_result)) {
-        echo '<div class="alert alert-success text-center my-0" role="alert" style="">' . $db_result . '</div>';
-    }
-    ?>
+    <div id="head_error" class="alert alert-danger text-center my-0 d-none" role="alert" style=""></div>
+    <div id="head_success" class="alert alert-success text-center my-0 d-none" role="alert" style=""></div>
