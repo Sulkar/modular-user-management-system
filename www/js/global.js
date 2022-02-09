@@ -1,6 +1,7 @@
 /**
  *  Global Javascript, available from all files
  */
+var LOADING = false;
 
 //universal Create Element function
 function createElement(type, props, ...children) {
@@ -12,6 +13,35 @@ function createElement(type, props, ...children) {
     else dom.appendChild(document.createTextNode(child));
   }
   return dom;
+}
+//create loader spinner
+function showLoader(parentElementID) {
+  let parent = document.getElementById(parentElementID);
+  let loaderWrapper = createElement(
+    "div",
+    {
+      id: "loader",
+      className: "d-flex justify-content-center align-items-center my-2",
+    },
+    createElement(
+      "div",
+      { className: "spinner-border text-success", role: "status" },
+      createElement("span", { className: "visually-hidden" }, "Loading...")
+    )
+  );
+  loaderWrapper.appendChild(
+    createElement("span", { className: "ms-2 text-success" }, "Loading...")
+  );
+  parent.appendChild(loaderWrapper);
+  LOADING = true;
+}
+function removeLoader(parentElementID) {
+  let parent = document.getElementById(parentElementID);
+  parent.innerHTML = "";
+  LOADING = false;
+}
+function isLoading() {
+  return LOADING;
 }
 // header error DIV
 function showError(message) {
@@ -51,4 +81,3 @@ async function databaseCRUD(data) {
       return error;
     });
 }
-

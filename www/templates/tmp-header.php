@@ -95,6 +95,7 @@
         </div>
 
     </nav>
-
+    <!-- alerts -->
     <div id="head_error" class="alert alert-danger text-center my-0 d-none" role="alert" style=""></div>
     <div id="head_success" class="alert alert-success text-center my-0 d-none" role="alert" style=""></div>
+    

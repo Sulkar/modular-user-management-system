@@ -6,6 +6,7 @@ console.log("Hello from data.");
 
 //load data
 function loadDataData() {
+  showLoader("loaderDIV");
   let profileData = {
     sqlQuery: "SELECT * FROM students",
     sqlValues: [],
@@ -13,6 +14,7 @@ function loadDataData() {
   (async () => {
     let data = await databaseCRUD(profileData);
     console.log(data);
+    removeLoader("loaderDIV");
     if (data["error"] == "") {
       if (data["result"].length > 0) {
         // fill DOM with data

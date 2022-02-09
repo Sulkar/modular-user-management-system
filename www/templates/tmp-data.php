@@ -25,6 +25,8 @@
     </div>
 </main>
 
+<div id="loaderDIV"></div>
+
 <!-- Modal import data -->
 <div class="modal fade" id="modalImportData" tabindex="-1" aria-labelledby="modalImportDataLabel" aria-hidden="true">
     <div class="modal-dialog">

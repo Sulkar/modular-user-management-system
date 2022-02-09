@@ -6,8 +6,8 @@
         <a class="btn btn-lg btn-light" id="btnCreateDbTable" href="#" role="button">Create Users Table</a>
 
     </div>
-
-
+    
+    <div id="loaderDIV"></div>
 
     <div class="container mt-5">
         <div class="row text-center">
