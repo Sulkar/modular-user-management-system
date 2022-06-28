@@ -57,12 +57,20 @@
                 </form>
 
 
-
+                <!-- Navbar right -->
                 <ul class="navbar-nav me-2 mb-2 mb-md-0">
-                    <?php if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) { ?>
+
+                    <!-- user logged in -->
+                    <?php if (isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true) { ?>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" aria-current="page" href="./sql.php">SQL</a>
+                        </li>
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" aria-current="page" href="./data.php">Data</a>
                         </li>
+
 
 
                         <li class="nav-item dropdown">
@@ -78,7 +86,7 @@
 
                             </ul>
                         </li>
-
+                    <!-- user NOT logged in -->
                     <?php } else { ?>
 
                         <li class="nav-item">

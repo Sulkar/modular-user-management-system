@@ -8,7 +8,7 @@ require_once('./templates/Template.php');
 session_start();
 
 // Check if the user is logged in, if not then redirect to startpage
-if (!isset($_SESSION["loggedin"]) && !$_SESSION["loggedin"] === true) {
+if (!isset($_SESSION["loggedIn"]) && !$_SESSION["loggedIn"] === true) {
     header("location: ../");
     exit;
 }

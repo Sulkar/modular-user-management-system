@@ -1,6 +1,6 @@
 <?php
 /*
-    Page: Data
+    Page: SQL
 */
 require_once('./templates/Template.php');
 
@@ -18,8 +18,8 @@ $tpl = new Template('./templates/');
 // Header
 print $tpl->render('tmp-header', array());
 // Body
-print $tpl->render('/data/tmp-data', array());
+print $tpl->render('/sql/tmp-sql', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript' => '/templates/data/data.js'
+    'page_javascript' => '/templates/sql/sql.js'
 ));

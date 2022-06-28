@@ -20,10 +20,10 @@ function databaseLogin(data) {
     body: JSON.stringify(data),
   })
     .then((response) => {
-      return response.json();
+      let responseJson = response.json();
+      return responseJson;
     })
     .then((data) => {
-      //
       if (data.loggedIn) {
         window.location.href = "/";
       } else {

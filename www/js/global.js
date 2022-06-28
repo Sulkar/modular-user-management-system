@@ -17,25 +17,26 @@ function createElement(type, props, ...children) {
 //create loader spinner
 function showLoader(parentElementID) {
   let parent = document.getElementById(parentElementID);
-  let loaderWrapper = createElement(
+  let loader = createElement(
     "div",
     {
       id: "loader",
       className: "d-flex justify-content-center align-items-center my-2",
     },
+    //child 1
     createElement(
       "div",
       { className: "spinner-border text-success", role: "status" },
       createElement("span", { className: "visually-hidden" }, "Loading...")
-    )
-  );
-  loaderWrapper.appendChild(
+    ),
+    //child 2
     createElement("span", { className: "ms-2 text-success" }, "Loading...")
   );
-  parent.appendChild(loaderWrapper);
+
+  parent.appendChild(loader);
   LOADING = true;
 }
-function removeLoader(parentElementID) {
+function hideLoader(parentElementID) {
   let parent = document.getElementById(parentElementID);
   parent.innerHTML = "";
   LOADING = false;
@@ -80,4 +81,36 @@ async function databaseCRUD(data) {
     .catch(function (error) {
       return error;
     });
+}
+//global function to get columns of table data
+function getTableColumns(data) {
+  return Object.keys(data[0]);
+}
+
+//get column names from table
+async function getColumnNames(currentTableName) {
+  let sqlGetColumnsQuery = {
+    sqlQuery: "SHOW COLUMNS FROM " + currentTableName,
+    sqlValues: [],
+  };
+  let columnData = await databaseCRUD(sqlGetColumnsQuery);
+  let columnArray = [];
+  columnData.result.forEach((element) => {
+    columnArray.push(element["Field"]);
+  });
+  return columnArray;
+}
+
+//get all tables from database
+async function getTableNames() {
+  let sqlGetTablesQuery = {
+    sqlQuery: "SHOW TABLES",
+    sqlValues: [],
+  };
+  let tablesData = await databaseCRUD(sqlGetTablesQuery);
+  let tableArray = [];
+  tablesData.result.forEach((element) => {
+    tableArray.push(Object.values(element)[0]);
+  });
+  return tableArray;
 }

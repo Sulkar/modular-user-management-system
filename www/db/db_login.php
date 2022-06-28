@@ -27,6 +27,7 @@ if (empty(trim($password))) {
     $results["error"] = $password_err;
 } else {
     $password = trim($password);
+    
 }
 
 // Validate credentials
@@ -49,15 +50,16 @@ if (empty($username_err) && empty($password_err)) {
                     if ($row = $stmt->fetch()) {
                         $id = $row["id"];
                         $username = $row["username"];
-                        $hashed_password = $row["password"];
-                        if (password_verify($password, $hashed_password)) {
-
+                        $db_password = $row["password"];
+                        //if (password_verify($password, $hashed_password)) {
+                        if ($password == $db_password) {
+                           
                             session_start();
                             // Store data in session variables
-                            $_SESSION["loggedin"] = true;
+                            $_SESSION["loggedIn"] = true;
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
-
+                            // update result
                             $results["loggedIn"] = true;
                         } else {
                             // Password is not valid, display a generic error message
