@@ -4,8 +4,21 @@
 
 console.log("Hello from data.");
 let CURRENT_TABLE_NAME = undefined;
-let CURRENT_COLUMN_NAMES = undefined;
-let CURRENT_TABLE_VALUES = undefined;
+let CURRENT_COLUMN_NAMES = [];
+let CURRENT_TABLE_VALUES = [];
+let UPDATE_VALUES = [];
+let DELETE_VALUES = [];
+
+//update speicher button
+function updateBtnSpeichern(type) {
+  if (type == "success") {
+    document.getElementById("btnSaveData").classList.remove("btn-danger");
+    document.getElementById("btnSaveData").classList.add("btn-success");
+  } else {
+    document.getElementById("btnSaveData").classList.remove("btn-success");
+    document.getElementById("btnSaveData").classList.add("btn-danger");
+  }
+}
 
 //load data
 function loadDataData() {
@@ -23,7 +36,7 @@ function loadDataData() {
     hideLoader("loaderDIV");
     if (data["error"] == "") {
       CURRENT_TABLE_VALUES = data["result"];
-      createDataTable("dataTable", CURRENT_TABLE_VALUES, CURRENT_COLUMN_NAMES);
+      createEditableDataTable("dataTable", CURRENT_TABLE_VALUES, CURRENT_COLUMN_NAMES);
       fillModalWithTableColumns(CURRENT_TABLE_NAME);
     } else {
       showError(data["error"]["errorInfo"]);
@@ -36,11 +49,12 @@ async function fillModalWithTableColumns(CURRENT_TABLE_NAME) {
   document.getElementById("columnsSpan").innerHTML = " " + columns.join(", ").replace("id,", "");
 }
 
-//creates a table of the database results
+//resets created databse table
 function resetDataTable(tableId) {
   document.getElementById(tableId).innerHTML = "";
 }
-function createDataTable(tableId, dataValues, columnNames) {
+//creates a table of the database results
+function createEditableDataTable(tableId, dataValues, columnNames) {
   let dataTable = document.getElementById(tableId);
   dataTable.innerHTML = "";
   let dataTableHead = createElement("thead", {});
@@ -64,10 +78,12 @@ function createDataTable(tableId, dataValues, columnNames) {
         dataTableBodyTr.appendChild(currentTd);
       } else {
         let currentTd = createElement("td", { id: "id_" + index1 + "_" + index2 }, item);
+        console.log(item)
         currentTd.addEventListener("click", function (e) {
           e.stopPropagation();
           this.setAttribute("contenteditable", "true");
           this.focus();
+          updateBtnSpeichern("danger");
         });
         dataTableBodyTr.appendChild(currentTd);
       }
@@ -77,7 +93,7 @@ function createDataTable(tableId, dataValues, columnNames) {
     deleteButton.style.color = "red";
     deleteButton.style.cursor = "Pointer";
     deleteButton.addEventListener("click", function () {
-      deleteRow(this.id);
+      deleteRowTemporary(this.id);
     });
     dataTableBodyTr.appendChild(createElement("td", {}, deleteButton));
 
@@ -90,20 +106,74 @@ function createDataTable(tableId, dataValues, columnNames) {
 //button save data
 document.getElementById("btnSaveData").addEventListener("click", function () {
   checkForUpdates();
+  updateBtnSpeichern("success");
+  let updateQuery = createUpdateQuery();
+  let deleteQuery = createDeleteQuery();
+
+  if (updateQuery != undefined) {
+    let updateData = {
+      sqlQuery: updateQuery,
+      sqlValues: [],
+    };
+
+    (async () => {
+      let data = await databaseCRUD(updateData);
+      if (data["error"] == "") {
+        // fill DOM with data
+        showSuccess("Data updated successfully");
+        loadDataData();
+      } else {
+        showError(data["error"]["errorInfo"]);
+      }
+    })();
+  }
+  if (deleteQuery != undefined) {
+    let deleteData = {
+      sqlQuery: deleteQuery,
+      sqlValues: [],
+    };
+
+    (async () => {
+      let data = await databaseCRUD(deleteData);
+      if (data["error"] == "") {
+        // fill DOM with data
+        showSuccess("Data deleted successfully");
+        loadDataData();
+      } else {
+        showError(data["error"]["errorInfo"]);
+      }
+    })();
+  }
 });
 
 function getRowFromId(tempId) {
   return tempId.match(/(id_)(\d+)_(\d+)/)[2];
 }
 
+function createUpdateQuery() {
+  let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
+  UPDATE_VALUES.forEach((updateValue) => {
+    updateQuery += "UPDATE " + CURRENT_TABLE_NAME + " SET " + updateValue[1] + " = '" + updateValue[2] + "' WHERE id = " + updateValue[0] + ";";
+  });
+  if (updateQuery != "") return updateQuery;
+  else return undefined;
+}
+
+function createDeleteQuery() {
+  let deleteQuery = "";
+  DELETE_VALUES.forEach((deleteId) => {
+    deleteQuery += "DELETE FROM " + CURRENT_TABLE_NAME + " WHERE id = " + deleteId + ";";
+  });
+  if (deleteQuery != "") return deleteQuery;
+  else return undefined;
+}
+
 //function: Sucht in der Tablle nach geänderten Werten und speichert diese im UPDATE_VALUES Array
-let UPDATE_VALUES = [];
 function checkForUpdates() {
   UPDATE_VALUES = [];
   //iteriert durch alle th im body = dort werden die IDs der Tabelle aufgelistet
 
   document.querySelectorAll("#dataTable tbody .sqlID").forEach((element) => {
-    //$("#dataTable tbody .sqlID").each(function () {
     var thisId = element.id;
     var tempRow = getRowFromId(thisId);
     var sqlIdOfRow = parseInt(element.innerHTML);
@@ -113,7 +183,7 @@ function checkForUpdates() {
       if (Object.values(element)[0] == sqlIdOfRow) {
         //check every data of current row
         for (var i = 0; i < maxColumns; i++) {
-          let rowCellValue = document.querySelector("#id_" + tempRow + "_" + i).innerHTML;
+          let rowCellValue = document.querySelector("#id_" + tempRow + "_" + i).textContent;
           if (rowCellValue !== String(Object.values(element)[i])) {
             Object.values(element)[i] = rowCellValue;
             var columnName = CURRENT_COLUMN_NAMES[i];
@@ -124,12 +194,12 @@ function checkForUpdates() {
       }
     });
   });
-  console.log(UPDATE_VALUES);
   return UPDATE_VALUES;
 }
 
 //select change
 document.getElementById("selectTables").addEventListener("change", function () {
+  updateBtnSpeichern("success");
   loadDataData();
 });
 
@@ -170,22 +240,21 @@ document.getElementById("btnImportDataModal").addEventListener("click", function
 });
 
 //function deleteRow
-function deleteRow(rowId) {
-  let deleteRowQuery = {
-    sqlQuery: "DELETE FROM " + CURRENT_TABLE_NAME + " WHERE id = " + rowId,
-    sqlValues: [],
-  };
-
-  (async () => {
-    let data = await databaseCRUD(deleteRowQuery);
-    if (data["error"] == "") {
-      // fill DOM with data
-      showSuccess("Row deleted.");
-      loadDataData();
-    } else {
-      showError(data["error"]["errorInfo"]);
+function deleteRowTemporary(rowId) {
+  updateBtnSpeichern("danger");
+  DELETE_VALUES.push(rowId);
+  let deleteIndex = undefined;
+  CURRENT_TABLE_VALUES.forEach((row, index) => {
+    if (Object.values(row)[0] == rowId) {
+      deleteIndex = index;
     }
-  })();
+  });
+  if (deleteIndex != undefined) {
+    CURRENT_TABLE_VALUES.splice(deleteIndex, 1);
+  }
+
+  resetDataTable("dataTable");
+  createEditableDataTable("dataTable", CURRENT_TABLE_VALUES, CURRENT_COLUMN_NAMES);
 }
 
 //creates sql values out of the textarea inputs

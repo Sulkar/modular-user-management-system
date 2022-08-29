@@ -8,9 +8,11 @@ function createElement(type, props, ...children) {
   let dom = document.createElement(type);
   if (props) Object.assign(dom, props);
   for (let child of children) {
-    if (typeof child != "string" && typeof child != "number")
+    if (typeof child != "string" && typeof child != "number" && child != null) {
       dom.appendChild(child);
-    else dom.appendChild(document.createTextNode(child));
+    } else {
+      dom.appendChild(document.createTextNode(child));
+    }
   }
   return dom;
 }
@@ -24,11 +26,7 @@ function showLoader(parentElementID) {
       className: "d-flex justify-content-center align-items-center my-2",
     },
     //child 1
-    createElement(
-      "div",
-      { className: "spinner-border text-success", role: "status" },
-      createElement("span", { className: "visually-hidden" }, "Loading...")
-    ),
+    createElement("div", { className: "spinner-border text-success", role: "status" }, createElement("span", { className: "visually-hidden" }, "Loading...")),
     //child 2
     createElement("span", { className: "ms-2 text-success" }, "Loading...")
   );
@@ -71,6 +69,22 @@ async function databaseCRUD(data) {
   return fetch("./db/db_CRUD.php", {
     method: "post",
     body: JSON.stringify(data),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      return data;
+    })
+    .catch(function (error) {
+      return error;
+    });
+}
+// universal CRUD function
+async function databaseDirectCRUD(query) {
+  return fetch("./db/db_direct_CRUD.php", {
+    method: "post",
+    body: JSON.stringify(query),
   })
     .then((response) => {
       return response.json();

@@ -14,6 +14,6 @@ print $tpl->render('tmp-header', array());
 // Body
 print $tpl->render('tmp-index', array());
 // Footer
-print $tpl->render('tmp-footer', array(
+print $tpl->render('tmp-footer', array(  
     'page_javascript' => '/js/index.js'
 ));

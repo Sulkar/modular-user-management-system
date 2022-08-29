@@ -4,6 +4,25 @@
 
 console.log("Hello from sql.");
 
+//execute SQL Commands
+$("#btnSqlAddColumn").on("click", function () {
+  $("#txtSQLData").val("ALTER TABLE users ADD COLUMN klasse VARCHAR(10) AFTER email;");
+});
+$("#btnSqlRemoveColumn").on("click", function () {
+  $("#txtSQLData").val("ALTER TABLE users DROP COLUMN klasse;");
+});
+$("#btnSqlCreateTable").on("click", function () {
+  $("#txtSQLData").val("CREATE TABLE students (id INT(6) AUTO_INCREMENT PRIMARY KEY, firstname VARCHAR(30), lastname VARCHAR(30), email VARCHAR(50));");
+});
+$("#btnSqlDeleteTable").on("click", function () {
+  $("#txtSQLData").val("DROP TABLE students;");
+});
+$("#btnSqlAlterColumn").on("click", function () {
+  $("#txtSQLData").val("ALTER TABLE students MODIFY email TEXT;");
+});
+
+
+
 //execute SQL Button
 document.getElementById("btnExecuteSQL").addEventListener("click", function () {
   showLoader("loaderDIV");
@@ -25,7 +44,7 @@ document.getElementById("btnExecuteSQL").addEventListener("click", function () {
       sqlStatementType = "SELECT";
       currentTableName = sqlQueryText.match(/FROM\s(\w+)/i)[1];
       columnNames = await getColumnNames(currentTableName);
-    }else if (sqlQueryText.match(/DROP TABLE/i)) {
+    } else if (sqlQueryText.match(/DROP TABLE/i)) {
       sqlStatementType = "DROP TABLE";
       currentTableName = sqlQueryText.match(/DROP TABLE\s(\w+)/i)[1];
     }
@@ -41,7 +60,7 @@ document.getElementById("btnExecuteSQL").addEventListener("click", function () {
         showSuccess("Table " + currentTableName + " created successfully.");
       } else if (sqlStatementType == "DROP TABLE") {
         showSuccess("Table " + currentTableName + " deleted successfully.");
-      } 
+      }
       hideLoader("loaderDIV");
     } else {
       showError(data["error"]["errorInfo"]);
@@ -78,4 +97,5 @@ function createDataTable(tableId, dataValues, columnNames) {
 
   dataTable.appendChild(dataTableBody);
 }
+
 // START

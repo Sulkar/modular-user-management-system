@@ -16,7 +16,6 @@ body {
   }
 }
 
-
 textarea:hover,
 input:hover,
 textarea:active,
@@ -34,26 +33,29 @@ label:focus,
   box-shadow: none !important;
 }
 
-
-
-
 .navbar__logo {
-    flex: 0 0 auto;
-    height: 2rem;
-    margin-right: 0.5rem;
+  flex: 0 0 auto;
+  height: 2rem;
+  margin-right: 0.5rem;
 }
 .navbar__title {
-    flex: 1 1 auto;
-    overflow: hidden;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 .navbar__brand {
-    align-items: center;
-    display: flex;
-    margin-right: 1rem;
-    min-width: 0;
-    text-decoration: none;
-    color: #1c1e21;
+  align-items: center;
+  display: flex;
+  margin-right: 1rem;
+  min-width: 0;
+  text-decoration: none;
+  color: #1c1e21;
 }
-a:hover{
-    color:#198754;
+a:hover {
+  color: #198754;
+}
+
+.tooLongText {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
