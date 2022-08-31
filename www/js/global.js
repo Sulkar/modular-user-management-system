@@ -1,10 +1,11 @@
 /**
  *  Global Javascript, available from all files
+ *  all functions have the prefix "global"
  */
 var LOADING = false;
 
 //universal Create Element function
-function createElement(type, props, ...children) {
+function globalCreateElement(type, props, ...children) {
   let dom = document.createElement(type);
   if (props) Object.assign(dom, props);
   for (let child of children) {
@@ -17,55 +18,55 @@ function createElement(type, props, ...children) {
   return dom;
 }
 //create loader spinner
-function showLoader(parentElementID) {
+function globalShowLoader(parentElementID) {
   let parent = document.getElementById(parentElementID);
-  let loader = createElement(
+  let loader = globalCreateElement(
     "div",
     {
       id: "loader",
       className: "d-flex justify-content-center align-items-center my-2",
     },
     //child 1
-    createElement("div", { className: "spinner-border text-success", role: "status" }, createElement("span", { className: "visually-hidden" }, "Loading...")),
+    globalCreateElement("div", { className: "spinner-border text-success", role: "status" }, globalCreateElement("span", { className: "visually-hidden" }, "Loading...")),
     //child 2
-    createElement("span", { className: "ms-2 text-success" }, "Loading...")
+    globalCreateElement("span", { className: "ms-2 text-success" }, "Loading...")
   );
 
   parent.appendChild(loader);
   LOADING = true;
 }
-function hideLoader(parentElementID) {
+function globalHideLoader(parentElementID) {
   let parent = document.getElementById(parentElementID);
   parent.innerHTML = "";
   LOADING = false;
 }
-function isLoading() {
+function globalIsLoading() {
   return LOADING;
 }
 // header error DIV
-function showError(message) {
+function globalShowError(message) {
   let errorDiv = document.getElementById("head_error");
   errorDiv.classList.remove("d-none");
   errorDiv.innerHTML = message;
-  hideSuccess();
+  globalHideSuccess();
 }
-function hideError() {
+function globalHideError() {
   let errorDiv = document.getElementById("head_error");
   errorDiv.classList.add("d-none");
 }
 // header success DIV
-function showSuccess(message) {
+function globalShowSuccess(message) {
   let errorDiv = document.getElementById("head_success");
   errorDiv.classList.remove("d-none");
   errorDiv.innerHTML = message;
-  hideError();
+  globalHideError();
 }
-function hideSuccess() {
+function globalHideSuccess() {
   let errorDiv = document.getElementById("head_success");
   errorDiv.classList.add("d-none");
 }
 // universal CRUD function
-async function databaseCRUD(data) {
+async function globalDatabaseCRUD(data) {
   return fetch("./db/db_CRUD.php", {
     method: "post",
     body: JSON.stringify(data),
@@ -81,7 +82,7 @@ async function databaseCRUD(data) {
     });
 }
 // universal CRUD function
-async function databaseDirectCRUD(query) {
+async function globalDatabaseDirectCRUD(query) {
   return fetch("./db/db_direct_CRUD.php", {
     method: "post",
     body: JSON.stringify(query),
@@ -97,17 +98,17 @@ async function databaseDirectCRUD(query) {
     });
 }
 //global function to get columns of table data
-function getTableColumns(data) {
+function globalGetTableColumns(data) {
   return Object.keys(data[0]);
 }
 
 //get column names from table
-async function getColumnNames(currentTableName) {
+async function globalGetColumnNames(currentTableName) {
   let sqlGetColumnsQuery = {
     sqlQuery: "SHOW COLUMNS FROM " + currentTableName,
     sqlValues: [],
   };
-  let columnData = await databaseCRUD(sqlGetColumnsQuery);
+  let columnData = await globalDatabaseCRUD(sqlGetColumnsQuery);
   let columnArray = [];
   columnData.result.forEach((element) => {
     columnArray.push(element["Field"]);
@@ -116,12 +117,12 @@ async function getColumnNames(currentTableName) {
 }
 
 //get all tables from database
-async function getTableNames() {
+async function globalGetTableNames() {
   let sqlGetTablesQuery = {
     sqlQuery: "SHOW TABLES",
     sqlValues: [],
   };
-  let tablesData = await databaseCRUD(sqlGetTablesQuery);
+  let tablesData = await globalDatabaseCRUD(sqlGetTablesQuery);
   let tableArray = [];
   tablesData.result.forEach((element) => {
     tableArray.push(Object.values(element)[0]);

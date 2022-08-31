@@ -22,7 +22,7 @@ function updateBtnSpeichern(type) {
 
 //load data
 function loadDataData() {
-  showLoader("loaderDIV");
+  globalShowLoader("loaderDIV");
   resetDataTable("dataTable");
   CURRENT_TABLE_NAME = document.getElementById("selectTables").value;
   let profileData = {
@@ -30,23 +30,24 @@ function loadDataData() {
     sqlValues: [],
   };
   (async () => {
-    CURRENT_COLUMN_NAMES = await getColumnNames(CURRENT_TABLE_NAME);
-    let data = await databaseCRUD(profileData);
+    CURRENT_COLUMN_NAMES = await globalGetColumnNames(CURRENT_TABLE_NAME);
+    let data = await globalDatabaseCRUD(profileData);
 
-    hideLoader("loaderDIV");
+    globalHideLoader("loaderDIV");
     if (data["error"] == "") {
       CURRENT_TABLE_VALUES = data["result"];
       createEditableDataTable("dataTable", CURRENT_TABLE_VALUES, CURRENT_COLUMN_NAMES);
       fillModalWithTableColumns(CURRENT_TABLE_NAME);
     } else {
-      showError(data["error"]["errorInfo"]);
+      globalShowError(data["error"]["errorInfo"]);
     }
   })();
 }
 
 async function fillModalWithTableColumns(CURRENT_TABLE_NAME) {
-  let columns = await getColumnNames(CURRENT_TABLE_NAME);
-  document.getElementById("columnsSpan").innerHTML = " " + columns.join(", ").replace("id,", "");
+  let columns = await globalGetColumnNames(CURRENT_TABLE_NAME);
+  document.getElementById("columnsSpan").innerHTML = "" + columns.join(", ").replace("id, ", "");
+  document.getElementById("txtImportData").innerHTML = "" + columns.join(", ").replace("id, ", "");
 }
 
 //resets created databse table
@@ -57,45 +58,52 @@ function resetDataTable(tableId) {
 function createEditableDataTable(tableId, dataValues, columnNames) {
   let dataTable = document.getElementById(tableId);
   dataTable.innerHTML = "";
-  let dataTableHead = createElement("thead", {});
-  let dataTableTr = createElement("tr", {});
+  let dataTableHead = globalCreateElement("thead", {});
+  let dataTableTr = globalCreateElement("tr", {});
   //create header columns
   columnNames.forEach((column) => {
-    dataTableTr.appendChild(createElement("th", {}, column));
+    dataTableTr.appendChild(globalCreateElement("th", {}, column));
   });
   //add edit column
-  dataTableTr.appendChild(createElement("th", {}, "edit"));
+  dataTableTr.appendChild(globalCreateElement("th", {}, "edit"));
   dataTableHead.appendChild(dataTableTr);
   dataTable.appendChild(dataTableHead);
 
   //create rows with items
-  let dataTableBody = createElement("tbody", {});
+  let dataTableBody = globalCreateElement("tbody", {});
   dataValues.forEach((row, index1) => {
-    let dataTableBodyTr = createElement("tr", {});
+    let dataTableBodyTr = globalCreateElement("tr", {});
     Object.values(row).forEach((item, index2) => {
       if (index2 == 0) {
-        let currentTd = createElement("td", { className: "sqlID", id: "id_" + index1 + "_" + index2 }, item);
+        let currentTd = globalCreateElement("td", { className: "sqlID", id: "id_" + index1 + "_" + index2 }, item);
         dataTableBodyTr.appendChild(currentTd);
       } else {
-        let currentTd = createElement("td", { id: "id_" + index1 + "_" + index2 }, item);
-        console.log(item)
-        currentTd.addEventListener("click", function (e) {
-          e.stopPropagation();
-          this.setAttribute("contenteditable", "true");
-          this.focus();
-          updateBtnSpeichern("danger");
-        });
+        let currentTd = undefined;
+        if (item.length > 250) {
+          item = item.substring(0, 250);
+          item += " ...";
+          currentTd = globalCreateElement("td", { id: "id_" + index1 + "_" + index2, className: "wordBreakAll textTooLong" }, item);
+        } else {
+          currentTd = globalCreateElement("td", { id: "id_" + index1 + "_" + index2, className: "" }, item);
+          currentTd.addEventListener("click", function (e) {
+            e.stopPropagation();
+            this.setAttribute("contenteditable", "true");
+            this.focus();
+            updateBtnSpeichern("danger");
+          });
+        }
+
         dataTableBodyTr.appendChild(currentTd);
       }
     });
     //add edit symbols 1) deleteButton
-    let deleteButton = createElement("span", { className: "deleteButton", id: Object.values(row)[0] }, "X");
+    let deleteButton = globalCreateElement("span", { className: "deleteButton", id: Object.values(row)[0] }, "X");
     deleteButton.style.color = "red";
     deleteButton.style.cursor = "Pointer";
     deleteButton.addEventListener("click", function () {
       deleteRowTemporary(this.id);
     });
-    dataTableBodyTr.appendChild(createElement("td", {}, deleteButton));
+    dataTableBodyTr.appendChild(globalCreateElement("td", {}, deleteButton));
 
     dataTableBody.appendChild(dataTableBodyTr);
   });
@@ -117,13 +125,13 @@ document.getElementById("btnSaveData").addEventListener("click", function () {
     };
 
     (async () => {
-      let data = await databaseCRUD(updateData);
+      let data = await globalDatabaseCRUD(updateData);
       if (data["error"] == "") {
         // fill DOM with data
-        showSuccess("Data updated successfully");
+        globalShowSuccess("Data updated successfully");
         loadDataData();
       } else {
-        showError(data["error"]["errorInfo"]);
+        globalShowError(data["error"]["errorInfo"]);
       }
     })();
   }
@@ -134,13 +142,13 @@ document.getElementById("btnSaveData").addEventListener("click", function () {
     };
 
     (async () => {
-      let data = await databaseCRUD(deleteData);
+      let data = await globalDatabaseCRUD(deleteData);
       if (data["error"] == "") {
         // fill DOM with data
-        showSuccess("Data deleted successfully");
+        globalShowSuccess("Data deleted successfully");
         loadDataData();
       } else {
-        showError(data["error"]["errorInfo"]);
+        globalShowError(data["error"]["errorInfo"]);
       }
     })();
   }
@@ -183,8 +191,10 @@ function checkForUpdates() {
       if (Object.values(element)[0] == sqlIdOfRow) {
         //check every data of current row
         for (var i = 0; i < maxColumns; i++) {
-          let rowCellValue = document.querySelector("#id_" + tempRow + "_" + i).textContent;
-          if (rowCellValue !== String(Object.values(element)[i])) {
+          let tempCell = document.querySelector("#id_" + tempRow + "_" + i);
+          let rowCellValue = tempCell.textContent;
+
+          if (!tempCell.classList.contains("textTooLong") && rowCellValue !== String(Object.values(element)[i])) {
             Object.values(element)[i] = rowCellValue;
             var columnName = CURRENT_COLUMN_NAMES[i];
             var rowIdValueArray = [sqlIdOfRow, columnName, rowCellValue];
@@ -228,13 +238,13 @@ document.getElementById("btnImportDataModal").addEventListener("click", function
   };
 
   (async () => {
-    let data = await databaseCRUD(insertTableData);
+    let data = await globalDatabaseCRUD(insertTableData);
     if (data["error"] == "") {
       // fill DOM with data
-      showSuccess("Inserted data into table " + CURRENT_TABLE_NAME);
+      globalShowSuccess("Inserted data into table " + CURRENT_TABLE_NAME);
       loadDataData();
     } else {
-      showError(data["error"]["errorInfo"]);
+      globalShowError(data["error"]["errorInfo"]);
     }
   })();
 });
@@ -274,7 +284,7 @@ function createSqlValues(csvData, columnsArray) {
 
 async function fillSelectTables() {
   let selectTables = document.getElementById("selectTables");
-  let tableNames = await getTableNames();
+  let tableNames = await globalGetTableNames();
   let options = tableNames.map((tname) => `<option value=${tname.toLowerCase()}>${tname}</option>`).join("\n");
   selectTables.innerHTML = options;
 }

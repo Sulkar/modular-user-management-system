@@ -10,7 +10,7 @@
                 <select id="selectTables"></select>
             </div>
             <div class="col-md-4">
-                <button type="button" class="btn btn-success" id="btnImportData" data-bs-toggle="modal" data-bs-target="#modalImportData">Import Data</button>
+                <button type="button" class="btn btn-success cutLongText" id="btnImportData" data-bs-toggle="modal" data-bs-target="#modalImportData">Import Data</button>
             </div>
             <div class="col-md-4">
                 <button type="button" class="btn btn-success" id="btnSaveData">speichern</button>
@@ -41,7 +41,7 @@
                     <form id="formUpdateEmail" class="form-inline" role="form" action="./db/db_profile_update.php" method="post">
                         <div class="form-group">
                             <label for="txtImportData" class="form-label">Columns:<br><span id="columnsSpan"></span></label>
-                            <textarea class="form-control" id="txtImportData" rows="3">Richard, Müller, Germany, 1998-04-16</textarea>
+                            <textarea class="form-control" id="txtImportData" rows="3"></textarea>
 
                         </div>
                     </form>

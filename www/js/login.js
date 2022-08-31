@@ -9,7 +9,7 @@ document.getElementById("loginButton").addEventListener("click", function () {
   let dataLogin = {
     username: document.getElementById("login_username").value,
     password: document.getElementById("login_password").value,
-  };
+  };  
   databaseLogin(dataLogin);
 });
 
@@ -27,7 +27,7 @@ function databaseLogin(data) {
       if (data.loggedIn) {
         window.location.href = "/";
       } else {
-        showError(data["error"]);
+        globalShowError(data["error"]);
       }
     })
     .catch(function (error) {

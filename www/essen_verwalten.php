@@ -16,10 +16,12 @@ if (!isset($_SESSION["loggedIn"]) && !$_SESSION["loggedIn"] === true) {
 // Templates
 $tpl = new Template('./templates/');
 // Header
-print $tpl->render('tmp-header', array());
+print $tpl->render('tmp-header', array(
+    'page_css' => '/templates/essen_verwalten/style.css',
+));
 // Body
-print $tpl->render('/essen_verwalten/tmp-essen_verwalten', array());
+print $tpl->render('/essen_verwalten/body', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript' => '/templates/essen_verwalten/essen_verwalten.js'
+    'page_javascript' => '/templates/essen_verwalten/script.js'
 ));

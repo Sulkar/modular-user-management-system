@@ -1,6 +1,6 @@
 <?php
 /*
-    Page: Data
+    Page: SQL
 */
 require_once('./templates/Template.php');
 
@@ -17,12 +17,11 @@ if (!isset($_SESSION["loggedIn"]) && !$_SESSION["loggedIn"] === true) {
 $tpl = new Template('./templates/');
 // Header
 print $tpl->render('tmp-header', array(
-    'page_css' => '/templates/data/style.css',
+    'page_css' => '/templates/essen_bestellen/style.css',
 ));
 // Body
-print $tpl->render('/data/body', array());
+print $tpl->render('/essen_bestellen/body', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript' => '/templates/data/script.js'
+    'page_javascript' => '/templates/essen_bestellen/script.js'
 ));
-

@@ -25,7 +25,7 @@ $("#btnSqlAlterColumn").on("click", function () {
 
 //execute SQL Button
 document.getElementById("btnExecuteSQL").addEventListener("click", function () {
-  showLoader("loaderDIV");
+  globalShowLoader("loaderDIV");
   resetDataTable("dataTable");
   let sqlQueryText = document.getElementById("txtSQLData").value;
   let sqlQuery = {
@@ -43,28 +43,28 @@ document.getElementById("btnExecuteSQL").addEventListener("click", function () {
     } else if (sqlQueryText.match(/SELECT/i)) {
       sqlStatementType = "SELECT";
       currentTableName = sqlQueryText.match(/FROM\s(\w+)/i)[1];
-      columnNames = await getColumnNames(currentTableName);
+      columnNames = await globalGetColumnNames(currentTableName);
     } else if (sqlQueryText.match(/DROP TABLE/i)) {
       sqlStatementType = "DROP TABLE";
       currentTableName = sqlQueryText.match(/DROP TABLE\s(\w+)/i)[1];
     }
 
-    let data = await databaseCRUD(sqlQuery);
+    let data = await globalDatabaseCRUD(sqlQuery);
 
     if (data["error"] == "") {
-      hideError();
+      globalHideError();
       if (sqlStatementType == "SELECT") {
         let values = data["result"];
         createDataTable("dataTable", values, columnNames);
       } else if (sqlStatementType == "CREATE") {
-        showSuccess("Table " + currentTableName + " created successfully.");
+        globalShowSuccess("Table " + currentTableName + " created successfully.");
       } else if (sqlStatementType == "DROP TABLE") {
-        showSuccess("Table " + currentTableName + " deleted successfully.");
+        globalShowSuccess("Table " + currentTableName + " deleted successfully.");
       }
-      hideLoader("loaderDIV");
+      globalHideLoader("loaderDIV");
     } else {
-      showError(data["error"]["errorInfo"]);
-      hideLoader("loaderDIV");
+      globalShowError(data["error"]["errorInfo"]);
+      globalHideLoader("loaderDIV");
     }
   })();
 });
@@ -76,21 +76,21 @@ function resetDataTable(tableId) {
 function createDataTable(tableId, dataValues, columnNames) {
   let dataTable = document.getElementById(tableId);
   dataTable.innerHTML = "";
-  let dataTableHead = createElement("thead", {});
-  let dataTableTr = createElement("tr", {});
+  let dataTableHead = globalCreateElement("thead", {});
+  let dataTableTr = globalCreateElement("tr", {});
   //create header columns
   columnNames.forEach((column) => {
-    dataTableTr.appendChild(createElement("th", {}, column));
+    dataTableTr.appendChild(globalCreateElement("th", {}, column));
   });
   dataTableHead.appendChild(dataTableTr);
   dataTable.appendChild(dataTableHead);
 
   //create rows with items
-  let dataTableBody = createElement("tbody", {});
+  let dataTableBody = globalCreateElement("tbody", {});
   dataValues.forEach((row) => {
-    let dataTableBodyTr = createElement("tr", {});
+    let dataTableBodyTr = globalCreateElement("tr", {});
     Object.values(row).forEach((item) => {
-      dataTableBodyTr.appendChild(createElement("td", { dataTest: "2" }, item));
+      dataTableBodyTr.appendChild(globalCreateElement("td", { dataTest: "2" }, item));
     });
     dataTableBody.appendChild(dataTableBodyTr);
   });

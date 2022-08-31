@@ -34,7 +34,7 @@ if (empty(trim($password))) {
 if (empty($username_err) && empty($password_err)) {
     try {
         // Prepare a select statement
-        $sql = "SELECT id, username, password FROM users WHERE username = :username";
+        $sql = "SELECT * FROM users WHERE username = :username";
 
         if ($stmt = $pdo->prepare($sql)) {
             // Bind variables to the prepared statement as parameters
@@ -50,6 +50,8 @@ if (empty($username_err) && empty($password_err)) {
                     if ($row = $stmt->fetch()) {
                         $id = $row["id"];
                         $username = $row["username"];
+                        $role = $row["role"];
+                        $klasse = $row["klasse"];
                         $db_password = $row["password"];
                         //if (password_verify($password, $hashed_password)) {
                         if ($password == $db_password) {
@@ -59,6 +61,8 @@ if (empty($username_err) && empty($password_err)) {
                             $_SESSION["loggedIn"] = true;
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
+                            $_SESSION["role"] = $role;
+                            $_SESSION["klasse"] = $klasse;
                             // update result
                             $results["loggedIn"] = true;
                         } else {

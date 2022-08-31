@@ -18,21 +18,21 @@ document
     };
     //create table users
     (async () => {
-      let data = await databaseCRUD(createUsersTableData);
+      let data = await globalDatabaseCRUD(createUsersTableData);
       console.log(data);
       if (data["error"] == "") {
         //create admin/admin account
         (async () => {
-          let data = await databaseCRUD(insertAdminAccountData);
+          let data = await globalDatabaseCRUD(insertAdminAccountData);
           console.log(data);
           if (data["error"] == "") {
-            showSuccess("Created table users and admin/admin account.");
+            globalShowSuccess("Created table users and admin/admin account.");
           } else {
-            showError(data["error"]["errorInfo"]);
+            globalShowError(data["error"]["errorInfo"]);
           }
         })();
       } else {
-        showError(data["error"]["errorInfo"]);
+        globalShowError(data["error"]["errorInfo"]);
       }
     })();
   });

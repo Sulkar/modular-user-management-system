@@ -12,7 +12,7 @@ function loadProfileData() {
   };
   //update db
   (async () => {
-    let data = await databaseCRUD(profileData);
+    let data = await globalDatabaseCRUD(profileData);
     console.log(data);
     if (data["error"] == "") {
       // fill DOM with data
@@ -20,7 +20,7 @@ function loadProfileData() {
       document.getElementById("profile_username2").innerHTML = data["result"][0].username;
       document.getElementById("profile_email").innerHTML = data["result"][0].email;
     } else {
-      showError(data["error"]);
+      globalShowError(data["error"]);
     }
   })();
 }
@@ -38,13 +38,13 @@ document.getElementById("updateEmail").addEventListener("click", function () {
   };
   //update db
   (async () => {
-    let data = await databaseCRUD(dataUpdateEmail);
+    let data = await globalDatabaseCRUD(dataUpdateEmail);
     console.log(data);
     if (data["error"] == "") {
-      showSuccess("Email changed successfully.");
+      globalShowSuccess("Email changed successfully.");
       loadProfileData();
     } else {
-      showError(data["error"]);
+      globalShowError(data["error"]);
     }
   })();
 });
@@ -76,9 +76,9 @@ function databaseChangePassword(data) {
       //
       console.log(data);
       if (data["passwordChanged"]) {
-        showSuccess(data["result"]);
+        globalShowSuccess(data["result"]);
       } else {
-        showError(data["error"]);
+        globalShowError(data["error"]);
       }
     });
 }

@@ -16,10 +16,13 @@ if (!isset($_SESSION["loggedIn"]) && !$_SESSION["loggedIn"] === true) {
 // Templates
 $tpl = new Template('./templates/');
 // Header
-print $tpl->render('tmp-header', array());
+print $tpl->render('tmp-header', array(
+    'page_css' => '/templates/sql/style.css',
+));
 // Body
-print $tpl->render('/sql/tmp-sql', array());
+print $tpl->render('/sql/body', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript' => '/templates/sql/sql.js'
+    'page_javascript' => '/templates/sql/script.js',
+
 ));

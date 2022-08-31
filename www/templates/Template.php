@@ -31,6 +31,7 @@ class Template {
 		$file = "{$this->folder}/{$suggestion}.php";
 		if ( file_exists( $file ) ){
 			$found = $file;
+		}else{
 		}
 		return $found;
 	}
