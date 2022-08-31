@@ -22,15 +22,19 @@ let CURRENT_EDIT_ESSEN_ID = undefined;
 let SELECTED_WEEK_START = undefined;
 let SELECTED_WEEK_END = undefined;
 
-let CURRENCT_KLASSE = "5a";
+let CURRENCT_KLASSE = undefined;
 let CURRENT_STUDENTS = [];
 
 //start
 $(document).ready(function () {
   fillSelectWithWeeks();
-  loadStudentData().then(function () {
-    loadEssenData().then(function () {
-      loadStudentEssenData();
+  globalGetSessionVariables().then(function (session) {
+    CURRENCT_KLASSE = session.klasse;
+    $("#klassenname").html(CURRENCT_KLASSE);
+    loadStudentData().then(function () {
+      loadEssenData().then(function () {
+        loadStudentEssenData();
+      });
     });
   });
 });
@@ -108,6 +112,7 @@ function fillSelectWithWeeks() {
     $("#selectEssenVerwaltenWoche").append('<option value="' + data[index].wochennr + '">' + data[index].woche + " " + data[index].start + " - " + data[index].end + "</option>");
   }
   $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "']").prop("selected", true);
+  $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "']").addClass("currentOption");
   SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(currentWeekNumber, 2022));
   SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(currentWeekNumber, 2022));
 }
@@ -122,7 +127,11 @@ $("#selectEssenVerwaltenWoche").on("change", function () {
     SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(selectedWeek, 2022));
     SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(selectedWeek, 2022));
   }
-  loadStudentData();
+  loadStudentData().then(function () {
+    loadEssenData().then(function () {
+      loadStudentEssenData();
+    });
+  });
 });
 
 function formatDateForSql(date) {

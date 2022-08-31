@@ -23,10 +23,44 @@ let SELECTED_WEEK_END = undefined;
 //start
 $(document).ready(function () {
   fillSelectWithWeeks();
-  $("#summernote").summernote();
-  $("#summernoteEdit").summernote();
+  $("#summernote").summernote({ callbacks: { onImageUpload: onImageUploadFunc("#summernote") } });
+  $("#summernoteEdit").summernote({ callbacks: { onImageUpload: onImageUploadFunc("#summernoteEdit") } });
   loadDataData();
 });
+
+//summernote auto resize image
+let onImageUploadFunc = function (elementId) {
+  return function (image) {
+    resizeImage(image[0], elementId);
+  };
+};
+
+function resizeImage(file, elementId) {
+  let image = new Image();
+  let url = window.URL ? window.URL : window.webkitURL;
+
+  image.src = url.createObjectURL(file);
+  image.onload = function (e) {
+    let canvas = document.createElement("canvas");
+    let ctx = canvas.getContext("2d");
+
+    let width = 600;
+    let factor = image.width / width;
+    let height = image.height / factor;
+
+    if (image.height > image.width) {
+      height = 300;
+      factor = image.height / height;
+      width = image.width / factor;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    $(elementId).summernote("editor.insertImage", canvas.toDataURL("jpeg", 0.7));
+  };
+}
 
 function fillSelectWithWeeks() {
   let currentDate = new Date();
@@ -62,6 +96,7 @@ function fillSelectWithWeeks() {
     $("#selectEssenVerwaltenWoche").append('<option value="' + data[index].wochennr + '">' + data[index].woche + " " + data[index].start + " - " + data[index].end + "</option>");
   }
   $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "']").prop("selected", true);
+  $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "']").addClass("currentOption");
   SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(currentWeekNumber, 2022));
   SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(currentWeekNumber, 2022));
 }
@@ -234,6 +269,7 @@ $("#btnEssenAendern").on("click", function () {
 
   (async () => {
     let data = await globalDatabaseDirectCRUD(sqlQuery);
+    console.log(data);
     if (data["error"] == "") {
       // fill DOM with data
       globalShowSuccess("Essen wurde geändert.");

@@ -2,7 +2,7 @@
 
     <div class="container mt-5">
         <div class="row text-center">
-            <h1 class="mb-3">Essen bestellen <span id="klassenname"> für 5a</span></h1>
+            <h1 class="mb-3">Essen bestellen für <span id="klassenname">...</span></h1>
 
         </div>
         <div class="row text-center">

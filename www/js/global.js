@@ -102,6 +102,22 @@ function globalGetTableColumns(data) {
   return Object.keys(data[0]);
 }
 
+// get SESSION variables
+async function globalGetSessionVariables() {
+  return fetch("./db/getSessionVariable.php", {
+    method: "post",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      return data.result;
+    })
+    .catch(function (error) {
+      return error;
+    });
+}
+
 //get column names from table
 async function globalGetColumnNames(currentTableName) {
   let sqlGetColumnsQuery = {
