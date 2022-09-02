@@ -2,7 +2,6 @@
   Data Page Javascript
 */
 
-console.log("Hello from data.");
 let CURRENT_TABLE_NAME = undefined;
 let CURRENT_COLUMN_NAMES = [];
 let CURRENT_TABLE_VALUES = [];
@@ -25,13 +24,11 @@ function loadDataData() {
   globalShowLoader("loaderDIV");
   resetDataTable("dataTable");
   CURRENT_TABLE_NAME = document.getElementById("selectTables").value;
-  let profileData = {
-    sqlQuery: "SELECT * FROM " + CURRENT_TABLE_NAME,
-    sqlValues: [],
-  };
+  let sqlQuery = "SELECT * FROM " + CURRENT_TABLE_NAME;
+
   (async () => {
     CURRENT_COLUMN_NAMES = await globalGetColumnNames(CURRENT_TABLE_NAME);
-    let data = await globalDatabaseCRUD(profileData);
+    let data = await globalDatabaseCRUD(sqlQuery);
 
     globalHideLoader("loaderDIV");
     if (data["error"] == "") {
@@ -119,13 +116,8 @@ document.getElementById("btnSaveData").addEventListener("click", function () {
   let deleteQuery = createDeleteQuery();
 
   if (updateQuery != undefined) {
-    let updateData = {
-      sqlQuery: updateQuery,
-      sqlValues: [],
-    };
-
     (async () => {
-      let data = await globalDatabaseCRUD(updateData);
+      let data = await globalDatabaseCRUD(updateQuery);
       if (data["error"] == "") {
         // fill DOM with data
         globalShowSuccess("Data updated successfully");
@@ -136,13 +128,8 @@ document.getElementById("btnSaveData").addEventListener("click", function () {
     })();
   }
   if (deleteQuery != undefined) {
-    let deleteData = {
-      sqlQuery: deleteQuery,
-      sqlValues: [],
-    };
-
     (async () => {
-      let data = await globalDatabaseCRUD(deleteData);
+      let data = await globalDatabaseCRUD(deleteQuery);
       if (data["error"] == "") {
         // fill DOM with data
         globalShowSuccess("Data deleted successfully");
@@ -218,27 +205,21 @@ document.getElementById("btnImportDataModal").addEventListener("click", function
   let dataToImport = document.getElementById("txtImportData").value;
 
   //prepare columns Array for sql statement
-  let columnsArrayForValues = CURRENT_COLUMN_NAMES.filter((columnName) => {
-    return columnName != "id";
-  }).map((columnName) => {
-    return ":" + columnName;
-  });
+  let valuesArray = dataToImport
+    .split(",")
+    .map((value) => value.trimLeft().trimRight())
+    .map((value) => `'${value}'`);
+
   let columnsArray = CURRENT_COLUMN_NAMES.filter((columnName) => {
     return columnName != "id";
   });
 
-  let sqlValues = createSqlValues(dataToImport, columnsArrayForValues);
-
   //create dynamic sql statement based on current table
-  let dynamicSqlStatement = "INSERT INTO " + CURRENT_TABLE_NAME + " (" + columnsArray.join(",") + ") VALUES (" + columnsArrayForValues.join(",") + ")";
+  let importQuery = "INSERT INTO " + CURRENT_TABLE_NAME + " (" + columnsArray.join(",") + ") VALUES (" + valuesArray.join(",") + ")";
 
-  let insertTableData = {
-    sqlQuery: dynamicSqlStatement,
-    sqlValues: sqlValues,
-  };
-
+  console.log(importQuery);
   (async () => {
-    let data = await globalDatabaseCRUD(insertTableData);
+    let data = await globalDatabaseCRUD(importQuery);
     if (data["error"] == "") {
       // fill DOM with data
       globalShowSuccess("Inserted data into table " + CURRENT_TABLE_NAME);

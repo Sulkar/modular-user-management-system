@@ -65,25 +65,10 @@ function globalHideSuccess() {
   let errorDiv = document.getElementById("head_success");
   errorDiv.classList.add("d-none");
 }
+
 // universal CRUD function
-async function globalDatabaseCRUD(data) {
+async function globalDatabaseCRUD(query) {
   return fetch("./db/db_CRUD.php", {
-    method: "post",
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      return data;
-    })
-    .catch(function (error) {
-      return error;
-    });
-}
-// universal CRUD function
-async function globalDatabaseDirectCRUD(query) {
-  return fetch("./db/db_direct_CRUD.php", {
     method: "post",
     body: JSON.stringify(query),
   })
@@ -120,11 +105,9 @@ async function globalGetSessionVariables() {
 
 //get column names from table
 async function globalGetColumnNames(currentTableName) {
-  let sqlGetColumnsQuery = {
-    sqlQuery: "SHOW COLUMNS FROM " + currentTableName,
-    sqlValues: [],
-  };
-  let columnData = await globalDatabaseCRUD(sqlGetColumnsQuery);
+  let sqlQuery = "SHOW COLUMNS FROM " + currentTableName;
+
+  let columnData = await globalDatabaseCRUD(sqlQuery);
   let columnArray = [];
   columnData.result.forEach((element) => {
     columnArray.push(element["Field"]);
@@ -134,11 +117,8 @@ async function globalGetColumnNames(currentTableName) {
 
 //get all tables from database
 async function globalGetTableNames() {
-  let sqlGetTablesQuery = {
-    sqlQuery: "SHOW TABLES",
-    sqlValues: [],
-  };
-  let tablesData = await globalDatabaseCRUD(sqlGetTablesQuery);
+  let sqlQuery = "SHOW TABLES";
+  let tablesData = await globalDatabaseCRUD(sqlQuery);
   let tableArray = [];
   tablesData.result.forEach((element) => {
     tableArray.push(Object.values(element)[0]);

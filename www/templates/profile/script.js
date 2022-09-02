@@ -2,17 +2,22 @@
   Profile Page Javascript
 */
 
-console.log("Hello from profile.");
+let CURRENT_USER_ID = undefined;
+
+//start
+$(document).ready(function () {
+  globalGetSessionVariables().then(function (session) {
+    CURRENT_USER_ID = session.id;
+    loadProfileData();
+  });
+});
 
 //update email Button
 function loadProfileData() {
-  let profileData = {
-    sqlQuery: "SELECT username, email FROM users WHERE id = :id",
-    sqlValues: [[[":id", "SESSION_id"]]],
-  };
+  let profileQuery = "SELECT username, email FROM users WHERE id = " + CURRENT_USER_ID;
   //update db
   (async () => {
-    let data = await globalDatabaseCRUD(profileData);
+    let data = await globalDatabaseCRUD(profileQuery);
     if (data["error"] == "") {
       // fill DOM with data
       document.getElementById("profile_username1").innerHTML = data["result"][0].username;
@@ -26,18 +31,12 @@ function loadProfileData() {
 
 //update email Button
 document.getElementById("updateEmail").addEventListener("click", function () {
-  let dataUpdateEmail = {
-    sqlQuery: "UPDATE users SET email = :email WHERE id = :id",
-    sqlValues: [
-      [
-        [":email", document.getElementById("newEmail").value],
-        [":id", "SESSION_id"],
-      ],
-    ],
-  };
+  let newEmail = document.getElementById("newEmail").value;
+  let dataUpdateEmailQuery = "UPDATE users SET email = " + newEmail + " WHERE id = " + CURRENT_USER_ID;
+
   //update db
   (async () => {
-    let data = await globalDatabaseCRUD(dataUpdateEmail);
+    let data = await globalDatabaseCRUD(dataUpdateEmailQuery);
     console.log(data);
     if (data["error"] == "") {
       globalShowSuccess("Email changed successfully.");
@@ -49,15 +48,13 @@ document.getElementById("updateEmail").addEventListener("click", function () {
 });
 
 //change password Button
-document
-  .getElementById("changePasswordButton")
-  .addEventListener("click", function () {
-    let dataChangePassword = {
-      newPassword: document.getElementById("newPassword").value,
-      confirmPassword: document.getElementById("confirmPassword").value,
-    };
-    databaseChangePassword(dataChangePassword);
-  });
+document.getElementById("changePasswordButton").addEventListener("click", function () {
+  let dataChangePassword = {
+    newPassword: document.getElementById("newPassword").value,
+    confirmPassword: document.getElementById("confirmPassword").value,
+  };
+  databaseChangePassword(dataChangePassword);
+});
 
 //database change password
 function databaseChangePassword(data) {
@@ -81,6 +78,3 @@ function databaseChangePassword(data) {
       }
     });
 }
-
-// START
-loadProfileData();

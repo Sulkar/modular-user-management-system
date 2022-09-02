@@ -50,15 +50,11 @@ function getIdsFromDataArray(dataArray) {
 function loadStudentEssenData() {
   globalShowLoader("loaderDIV");
   CURRENT_TABLE_NAME = "schueler_essen";
-  let tempSqlQuery = "SELECT * FROM " + CURRENT_TABLE_NAME + " WHERE schueler_id IN (" + getIdsFromDataArray(CURRENT_STUDENTS).join() + ")";
-  tempSqlQuery += " AND tag >= '" + SELECTED_WEEK_START + "' AND tag <= '" + SELECTED_WEEK_END + "'";
-  let profileData = {
-    sqlQuery: tempSqlQuery,
-    sqlValues: [],
-  };
+  let loadStudentEssenQuery = "SELECT * FROM " + CURRENT_TABLE_NAME + " WHERE schueler_id IN (" + getIdsFromDataArray(CURRENT_STUDENTS).join() + ")";
+  loadStudentEssenQuery += " AND tag >= '" + SELECTED_WEEK_START + "' AND tag <= '" + SELECTED_WEEK_END + "'";
 
   (async () => {
-    let data = await globalDatabaseCRUD(profileData);
+    let data = await globalDatabaseCRUD(loadStudentEssenQuery);
 
     globalHideLoader("loaderDIV");
     if (data["error"] == "") {
@@ -175,14 +171,11 @@ async function loadStudentData() {
   globalShowLoader("loaderDIV");
   resetDataTable("dataTable");
   CURRENT_TABLE_NAME = "students";
-  let profileData = {
-    sqlQuery: "SELECT id, firstname, lastname FROM " + CURRENT_TABLE_NAME + " WHERE klasse = '" + CURRENCT_KLASSE + "';",
-    sqlValues: [],
-  };
+  let loadStudentQuery = "SELECT id, firstname, lastname FROM " + CURRENT_TABLE_NAME + " WHERE klasse = '" + CURRENCT_KLASSE + "';";
 
   await (async () => {
     CURRENT_COLUMN_NAMES = ["Vorname", "Nachname", "Mo", "Di", "Mi", "Do", "Fr"]; //await globalGetColumnNames(CURRENT_TABLE_NAME);
-    let data = await globalDatabaseCRUD(profileData);
+    let data = await globalDatabaseCRUD(loadStudentQuery);
 
     globalHideLoader("loaderDIV");
     if (data["error"] == "") {
@@ -199,6 +192,7 @@ async function loadStudentData() {
 function resetDataTable(tableId) {
   document.getElementById(tableId).innerHTML = "";
 }
+
 //creates a table of the database results
 function createEssenDataTable(tableId, dataValues, columnNames) {
   //dates for days
@@ -307,7 +301,7 @@ function updateEssenAuswahl(studentId, essenId, tag) {
   sqlQuery += " ON DUPLICATE KEY UPDATE schueler_id = " + studentId + ", essen_id = " + essenId + ", tag = '" + tag + "'";
 
   (async () => {
-    let data = await globalDatabaseDirectCRUD(sqlQuery);
+    let data = await globalDatabaseCRUD(sqlQuery);
     if (data["error"] == "") {
       // success
     } else {
@@ -320,13 +314,10 @@ async function loadEssenData() {
   globalShowLoader("loaderDIV");
 
   CURRENT_TABLE_NAME = "essen";
-  let profileData = {
-    sqlQuery: "SELECT * FROM " + CURRENT_TABLE_NAME + " WHERE tag >= '" + SELECTED_WEEK_START + "' AND tag <= '" + SELECTED_WEEK_END + "' ORDER BY tag;",
-    sqlValues: [],
-  };
+  let loadEssenQuery = "SELECT * FROM " + CURRENT_TABLE_NAME + " WHERE tag >= '" + SELECTED_WEEK_START + "' AND tag <= '" + SELECTED_WEEK_END + "' ORDER BY tag;";
 
   await (async () => {
-    let data = await globalDatabaseCRUD(profileData);
+    let data = await globalDatabaseCRUD(loadEssenQuery);
 
     globalHideLoader("loaderDIV");
     if (data["error"] == "") {
@@ -362,5 +353,3 @@ function addEssenToTable() {
   });
 }
 
-//Modal: neues Essen erstellen
-document.getElementById("btnCreateNewEssen").addEventListener("click", function () {});

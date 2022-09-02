@@ -2,8 +2,6 @@
   Login Page Javascript
 */
 
-console.log("Hello from login.");
-
 //Login Button
 document.getElementById("loginButton").addEventListener("click", function () {
   let dataLogin = {

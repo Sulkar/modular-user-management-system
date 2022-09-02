@@ -2,8 +2,6 @@
   Data Page Javascript
 */
 
-console.log("Hello from sql.");
-
 //execute SQL Commands
 $("#btnSqlAddColumn").on("click", function () {
   $("#txtSQLData").val("ALTER TABLE users ADD COLUMN klasse VARCHAR(10) AFTER email;");
@@ -21,32 +19,26 @@ $("#btnSqlAlterColumn").on("click", function () {
   $("#txtSQLData").val("ALTER TABLE students MODIFY email TEXT;");
 });
 
-
-
 //execute SQL Button
 document.getElementById("btnExecuteSQL").addEventListener("click", function () {
   globalShowLoader("loaderDIV");
   resetDataTable("dataTable");
-  let sqlQueryText = document.getElementById("txtSQLData").value;
-  let sqlQuery = {
-    sqlQuery: sqlQueryText,
-    sqlValues: [],
-  };
+  let sqlQuery = document.getElementById("txtSQLData").value;
+
   let columnNames = undefined;
   let sqlStatementType = undefined;
   let currentTableName = undefined;
   (async () => {
     //what happened SELECT, CREATE, ...
-    if (sqlQueryText.match(/CREATE TABLE/i)) {
+    if (sqlQuery.match(/CREATE TABLE/i)) {
       sqlStatementType = "CREATE";
-      currentTableName = sqlQueryText.match(/CREATE TABLE\s(\w+)/i)[1];
-    } else if (sqlQueryText.match(/SELECT/i)) {
+      currentTableName = sqlQuery.match(/CREATE TABLE\s(\w+)/i)[1];
+    } else if (sqlQuery.match(/SELECT/i)) {
       sqlStatementType = "SELECT";
-      currentTableName = sqlQueryText.match(/FROM\s(\w+)/i)[1];
-      columnNames = await globalGetColumnNames(currentTableName);
-    } else if (sqlQueryText.match(/DROP TABLE/i)) {
+      currentTableName = sqlQuery.match(/FROM\s(\w+)/i)[1];
+    } else if (sqlQuery.match(/DROP TABLE/i)) {
       sqlStatementType = "DROP TABLE";
-      currentTableName = sqlQueryText.match(/DROP TABLE\s(\w+)/i)[1];
+      currentTableName = sqlQuery.match(/DROP TABLE\s(\w+)/i)[1];
     }
 
     let data = await globalDatabaseCRUD(sqlQuery);
@@ -55,6 +47,7 @@ document.getElementById("btnExecuteSQL").addEventListener("click", function () {
       globalHideError();
       if (sqlStatementType == "SELECT") {
         let values = data["result"];
+        columnNames = await globalGetColumnNames(currentTableName);
         createDataTable("dataTable", values, columnNames);
       } else if (sqlStatementType == "CREATE") {
         globalShowSuccess("Table " + currentTableName + " created successfully.");

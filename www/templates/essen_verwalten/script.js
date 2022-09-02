@@ -155,14 +155,11 @@ function loadDataData() {
   globalShowLoader("loaderDIV");
   resetDataTable("dataTable");
   CURRENT_TABLE_NAME = "essen";
-  let profileData = {
-    sqlQuery: "SELECT * FROM " + CURRENT_TABLE_NAME + " WHERE tag >= '" + SELECTED_WEEK_START + "' AND tag <= '" + SELECTED_WEEK_END + "' ORDER BY tag;",
-    sqlValues: [],
-  };
+  let dataQuery = "SELECT * FROM " + CURRENT_TABLE_NAME + " WHERE tag >= '" + SELECTED_WEEK_START + "' AND tag <= '" + SELECTED_WEEK_END + "' ORDER BY tag;";
 
   (async () => {
     CURRENT_COLUMN_NAMES = await globalGetColumnNames(CURRENT_TABLE_NAME);
-    let data = await globalDatabaseCRUD(profileData);
+    let data = await globalDatabaseCRUD(dataQuery);
 
     globalHideLoader("loaderDIV");
     if (data["error"] == "") {
@@ -249,7 +246,7 @@ function fillEssenBearbeitenForm(id) {
 $("#btnEssenLoeschenJa").on("click", function () {
   let sqlQuery = "DELETE FROM essen WHERE id = " + CURRENT_EDIT_ESSEN_ID;
   (async () => {
-    let data = await globalDatabaseDirectCRUD(sqlQuery);
+    let data = await globalDatabaseCRUD(sqlQuery);
     if (data["error"] == "") {
       globalShowSuccess("Essen wurde gelöscht");
       loadDataData();
@@ -268,7 +265,7 @@ $("#btnEssenAendern").on("click", function () {
   let sqlQuery = "UPDATE essen set name='" + essenName + "', tag = '" + essenTag + "', beschreibung = '" + essenBeschreibungHtml + "', typ = '" + essenTyp + "' WHERE id = " + CURRENT_EDIT_ESSEN_ID;
 
   (async () => {
-    let data = await globalDatabaseDirectCRUD(sqlQuery);
+    let data = await globalDatabaseCRUD(sqlQuery);
     console.log(data);
     if (data["error"] == "") {
       // fill DOM with data
@@ -288,7 +285,7 @@ document.getElementById("btnNeuesEssenErstellen").addEventListener("click", func
   let essenTyp = $("#selectEssenTypEdit").val();
   let sqlQuery = "INSERT INTO essen (name, tag, beschreibung, typ) VALUES ('" + essenName + "','" + essenTag + "','" + essenBeschreibungHtml + "','" + essenTyp + "')";
   (async () => {
-    let data = await globalDatabaseDirectCRUD(sqlQuery);
+    let data = await globalDatabaseCRUD(sqlQuery);
     if (data["error"] == "") {
       // fill DOM with data
       globalShowSuccess("Inserted data into table ");
