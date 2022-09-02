@@ -1,7 +1,7 @@
 <?php
 
 // Include config file
-require_once "config.php";
+require_once "../../db/config.php";
 
 // data from js file
 $data = json_decode(file_get_contents('php://input'), true);
@@ -27,7 +27,6 @@ if (empty(trim($password))) {
     $results["error"] = $password_err;
 } else {
     $password = trim($password);
-    
 }
 
 // Validate credentials
@@ -50,19 +49,22 @@ if (empty($username_err) && empty($password_err)) {
                     if ($row = $stmt->fetch()) {
                         $id = $row["id"];
                         $username = $row["username"];
-                        $role = $row["role"];
-                        $klasse = $row["klasse"];
                         $db_password = $row["password"];
+
                         //if (password_verify($password, $hashed_password)) {
                         if ($password == $db_password) {
-                           
+
                             session_start();
                             // Store data in session variables
                             $_SESSION["loggedIn"] = true;
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
-                            $_SESSION["role"] = $role;
-                            $_SESSION["klasse"] = $klasse;
+                            /*
+                                add cutom SESSION variables:
+                            */
+                            $_SESSION["role"] = $row["role"];
+                            $_SESSION["klasse"] = $row["klasse"];
+
                             // update result
                             $results["loggedIn"] = true;
                         } else {

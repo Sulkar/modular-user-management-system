@@ -13,7 +13,6 @@ function loadProfileData() {
   //update db
   (async () => {
     let data = await globalDatabaseCRUD(profileData);
-    console.log(data);
     if (data["error"] == "") {
       // fill DOM with data
       document.getElementById("profile_username1").innerHTML = data["result"][0].username;
@@ -62,7 +61,7 @@ document
 
 //database change password
 function databaseChangePassword(data) {
-  fetch("./db/db_update_password.php", {
+  fetch("/templates/profile/db_update_password.php", {
     method: "post",
     body: JSON.stringify(data),
   })

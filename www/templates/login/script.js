@@ -15,7 +15,7 @@ document.getElementById("loginButton").addEventListener("click", function () {
 
 //database login
 function databaseLogin(data) {
-  fetch("./db/db_login.php", {
+  fetch("/templates/login/db_login.php", {
     method: "post",
     body: JSON.stringify(data),
   })

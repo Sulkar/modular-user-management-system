@@ -1,4 +1,14 @@
-# SQLverine-website
+# modular user management system
+
+The simple modular user management system gives you a starting point to develop user management systems with database connection. 
+
+You can find templates in /www/templates/. The following templates are currently available:
+- login 
+- profile 
+- sql editor
+- data 
+- essen verwalten
+- essen bestellen
 
 ## Docker setup
 - download Docker
@@ -24,3 +34,8 @@
 
 ## Infos
 - [https://www.sitepoint.com/docker-php-development-environment/](https://www.sitepoint.com/docker-php-development-environment/)
+- used libraries:
+  - jQuery
+  - bootstrap
+  - summernote
+

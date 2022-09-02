@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>simple UMS</title>
     <!-- CSS only -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="/css/bootstrap-5.2.0.min.css" rel="stylesheet">
     <link href="/css/summernote-bs5.min.css" rel="stylesheet">
     <link href="/css/index.css" rel="stylesheet">
     <link href="<?php if (isset($page_css)) {

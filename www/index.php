@@ -10,10 +10,10 @@ session_start();
 // Templates
 $tpl = new Template('./templates/');
 // Header
-print $tpl->render('tmp-header', array());
+print $tpl->render('tmp-header', array('page_css' => '/templates/index/style.css'));
 // Body
-print $tpl->render('tmp-index', array());
+print $tpl->render('/index/body', array());
 // Footer
-print $tpl->render('tmp-footer', array(  
-    'page_javascript' => '/js/index.js'
+print $tpl->render('tmp-footer', array(
+    'page_javascript' => '/templates/index/script.js'
 ));

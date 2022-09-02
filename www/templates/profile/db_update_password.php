@@ -2,7 +2,7 @@
 session_start();
 
 // Include config file
-require_once "config.php";
+require_once "../../db/config.php";
 
 // data from js file
 $data = json_decode(file_get_contents('php://input'), true);

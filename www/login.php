@@ -10,10 +10,11 @@ session_start();
 // Templates
 $tpl = new Template('./templates/');
 // Header
-print $tpl->render('tmp-header', array());
+print $tpl->render('tmp-header', array('page_css' => '/templates/login/style.css'));
 // Body
-print $tpl->render('tmp-login', array());
+print $tpl->render('/login/body', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript' => '/js/login.js'
+    'page_javascript' => '/templates/login/script.js'
 ));
+

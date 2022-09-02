@@ -16,10 +16,10 @@ if (!isset($_SESSION["loggedIn"]) && !$_SESSION["loggedIn"] === true) {
 // Templates
 $tpl = new Template('./templates/');
 // Header
-print $tpl->render('tmp-header', array());
+print $tpl->render('tmp-header', array('page_css' => '/templates/profile/style.css'));
 // Body
-print $tpl->render('tmp-profile', array());
+print $tpl->render('/profile/body', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript' => '/js/profile.js'
+    'page_javascript' => '/templates/profile/script.js'
 ));
