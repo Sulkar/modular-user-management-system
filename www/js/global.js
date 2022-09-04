@@ -107,21 +107,30 @@ async function globalGetSessionVariables() {
 async function globalGetColumnNames(currentTableName) {
   let sqlQuery = "SHOW COLUMNS FROM " + currentTableName;
 
-  let columnData = await globalDatabaseCRUD(sqlQuery);
+  let data = await globalDatabaseCRUD(sqlQuery);
   let columnArray = [];
-  columnData.result.forEach((element) => {
-    columnArray.push(element["Field"]);
-  });
+  if (data["error"] == "") {
+    data.result.forEach((element) => {
+      columnArray.push(element["Field"]);
+    });
+  } else {
+    globalShowError(data["error"]["errorInfo"]);
+  }
   return columnArray;
 }
 
 //get all tables from database
 async function globalGetTableNames() {
   let sqlQuery = "SHOW TABLES";
-  let tablesData = await globalDatabaseCRUD(sqlQuery);
+  let data = await globalDatabaseCRUD(sqlQuery);
   let tableArray = [];
-  tablesData.result.forEach((element) => {
-    tableArray.push(Object.values(element)[0]);
-  });
+  if (data["error"] == "") {
+    data.result.forEach((element) => {
+      tableArray.push(Object.values(element)[0]);
+    });
+  } else {
+    globalShowError(data["error"]["errorInfo"]);
+  }
+
   return tableArray;
 }

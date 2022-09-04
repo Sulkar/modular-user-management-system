@@ -24,6 +24,7 @@ let SELECTED_WEEK_END = undefined;
 
 let CURRENCT_KLASSE = undefined;
 let CURRENT_STUDENTS = [];
+let CURRENT_ESSEN_DATA = [];
 
 //start
 $(document).ready(function () {
@@ -67,10 +68,8 @@ function loadStudentEssenData() {
 }
 
 function addStudentEssenToTable() {
-  CURRENT_TABLE_VALUES.forEach((row) => {
-    $("#" + row.schueler_id + "_" + row.tag)
-      .find(".essenid_" + row.essen_id + ">.essenRadio")
-      .prop("checked", true);
+  CURRENT_TABLE_VALUES.forEach((schuelerEssen) => {
+    $("#radioId_" + schuelerEssen.essen_id + "_" + schuelerEssen.tag + "_" + schuelerEssen.schueler_id).prop("checked", true);
   });
 }
 
@@ -256,25 +255,8 @@ function createEssenDataTable(tableId, dataValues, columnNames) {
     days.forEach((day) => {
       let sqlFormatDate = formatDateForSql(dayDateMap[day]);
       //add combo
-      essenTable += "<td id='" + currentStudentId + "_" + sqlFormatDate + "'>";
-      //radio: essen typ 1
-      essenTable += "<div class='form-check' data-essenid=''>";
-      essenTable +=
-        "<input class='form-check-input essenRadio typ1 " + sqlFormatDate + "' type='radio' name='flexRadioDefault" + day + "-" + index1 + "' id='radioId-1-" + day + "-" + index1 + "' disabled>";
-      essenTable += "<label class='form-check-label typ1 " + sqlFormatDate + "' for='radioId-1-" + day + "-" + index1 + "'>fleisch</label>";
-      essenTable += "</div>";
-      //radio: essen typ 2
-      essenTable += "<div class='form-check' data-essenid=''>";
-      essenTable +=
-        "<input class='form-check-input essenRadio typ2 " + sqlFormatDate + "' type='radio' name='flexRadioDefault" + day + "-" + index1 + "' id='radioId-2-" + day + "-" + index1 + "' disabled>";
-      essenTable += "<label class='form-check-label typ2 " + sqlFormatDate + "' for='radioId-2-" + day + "-" + index1 + "'>vegetarisch</label>";
-      essenTable += "</div>";
-      //radio: kein essen
-      essenTable += "<div class='form-check essenid_0' data-essenid='0'>";
-      essenTable +=
-        "<input class='form-check-input essenRadio typ3 " + sqlFormatDate + "' type='radio' name='flexRadioDefault" + day + "-" + index1 + "' id='radioId-3-" + day + "-" + index1 + "' disabled>";
-      essenTable += "<label class='form-check-label typ3 " + sqlFormatDate + "' for='radioId-3-" + day + "-" + index1 + "'>kein Essen</label>";
-      essenTable += "</div>";
+      essenTable += "<td class='" + sqlFormatDate + "' id='" + currentStudentId + "_" + sqlFormatDate + "'>";
+      essenTable += createKeinEssenRadio(sqlFormatDate, currentStudentId);
       essenTable += "</td>";
     });
 
@@ -283,17 +265,43 @@ function createEssenDataTable(tableId, dataValues, columnNames) {
   essenTable += "</tbody>";
 
   $("#" + tableId).append(essenTable);
+}
 
+function initRadioEvents() {
   //add on change event to radio controls
   $(".essenRadio").on("change", function () {
-    let tempStudentId = $(this).parent().parent().attr("id").split("_")[0];
-    let tempEssenId = $(this).parent().data("essenid");
-    let tempTag = $(this).parent().parent().attr("id").split("_")[1];
+    let tempStudentId = $(this).parent().attr("id").split("_")[0];
+    let tempEssenId = $(this).data("essenid");
+    let tempTag = $(this).parent().attr("id").split("_")[1];
     //console.log("student id: " + tempStudentId);
     //console.log("essen id: " + tempEssenId);
     //console.log("tag: " + tempTag);
     updateEssenAuswahl(tempStudentId, tempEssenId, tempTag);
   });
+  //add on click essen link events
+  $(".essenModalLink").on("click", function () {
+    let clickedEssen = findEssenDataForId($(this).attr("id").split("_")[1]);
+    console.log(clickedEssen);
+  });
+}
+
+function createKeinEssenRadio(sqlFormatDate, studentId) {
+  let essenId = 0;
+  let keinEssenRadio = "";
+  keinEssenRadio += "<input class='form-check-input essenRadio typ3 " + sqlFormatDate + "' type='radio' id='radioId_" + essenId + "_" + sqlFormatDate + "_" + studentId + "'";
+  keinEssenRadio += " data-essenid='0'";
+  keinEssenRadio += " name='grp-" + sqlFormatDate + "-" + studentId + "' >";
+  keinEssenRadio += " <label class='form-check-label typ3 " + sqlFormatDate + "' for='radioId_" + essenId + "_" + sqlFormatDate + "_" + studentId + "'>kein Essen</label>";
+  return keinEssenRadio;
+}
+
+function createEssenRadio(essen, studentId) {
+  let essenRadio = "";
+  essenRadio += "<input class='form-check-input essenRadio " + essen.tag + "' type='radio' id='radioId_" + essen.id + "_" + essen.tag + "_" + studentId + "'";
+  essenRadio += " data-essenid='" + essen.id + "'";
+  essenRadio += " name='grp-" + essen.tag + "-" + studentId + "' >";
+  essenRadio += " <a class='essenModalLink' id='essenId_" + essen.id + "' href='#'>" + essen.name + "</a>";
+  return essenRadio;
 }
 
 function updateEssenAuswahl(studentId, essenId, tag) {
@@ -322,6 +330,7 @@ async function loadEssenData() {
     globalHideLoader("loaderDIV");
     if (data["error"] == "") {
       CURRENT_TABLE_VALUES = data["result"];
+      CURRENT_ESSEN_DATA = data["result"];
       addEssenToTable();
     } else {
       globalShowError(data["error"]["errorInfo"]);
@@ -329,27 +338,36 @@ async function loadEssenData() {
   })();
 }
 
-function addEssenToTable() {
-  CURRENT_TABLE_VALUES.forEach((row) => {
-    if (row.typ == "fleisch") {
-      $(".essenRadio.typ1." + row.tag + "").prop("disabled", false);
-      $(".essenRadio.typ3." + row.tag + "").prop("disabled", false);
-      $(".form-check-label.typ1." + row.tag + "")
-        .parent()
-        .addClass("essenid_" + row.id);
-      $(".form-check-label.typ1." + row.tag + "")
-        .parent()
-        .data("essenid", row.id);
-    } else {
-      $(".essenRadio.typ2." + row.tag + "").prop("disabled", false);
-      $(".essenRadio.typ3." + row.tag + "").prop("disabled", false);
-      $(".form-check-label.typ2." + row.tag + "")
-        .parent()
-        .addClass("essenid_" + row.id);
-      $(".form-check-label.typ2." + row.tag + "")
-        .parent()
-        .data("essenid", row.id);
+function findEssenDataForId(essenId) {
+  let foundEssen = "";
+  CURRENT_ESSEN_DATA.forEach((essen) => {
+    if (essen.id == essenId) {
+      foundEssen = essen;
     }
   });
+  return foundEssen;
 }
 
+function getTdsForDay(day) {
+  let tdsForDay = [];
+  $("#dataTable tbody td." + day).each(function () {
+    tdsForDay.push(this);
+  });
+  return tdsForDay;
+}
+function getStudentIdFromTd(tempTd) {
+  return $(tempTd).attr("id").split("_")[0];
+}
+
+function addEssenToTable() {
+  CURRENT_TABLE_VALUES.forEach((essen) => {
+    let dayTds = getTdsForDay(essen.tag);
+    dayTds.forEach((dayTd) => {
+      let tempStudentId = getStudentIdFromTd(dayTd);
+      $(dayTd).prepend("<br>");
+      $(dayTd).prepend(createEssenRadio(essen, tempStudentId));
+    });
+  });
+  //
+  initRadioEvents();
+}
