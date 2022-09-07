@@ -1,4 +1,4 @@
-<main class="flex-shrink-0">
+<main class="flex-shrink-0" id="mainBody">
 
     <div class="container mt-5">
         <div class="row text-center">
@@ -11,8 +11,11 @@
 
                 </select>
             </div>
-            <div class="col-md-6">
-                <button type="button" class="btn btn-success" id="btnCreateNewEssen" data-bs-toggle="modal" data-bs-target="#modalEssenAnlegen">Essen anlegen</button>
+            <div class="col-md-4">
+                <button type="button" class="btn btn-success noPrint" id="btnCreateNewEssen" data-bs-toggle="modal" data-bs-target="#modalEssenAnlegen">Essen anlegen</button>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-success noPrint" id="btnDrucken">drucken</button>
             </div>
 
         </div>
@@ -23,6 +26,7 @@
             </div>
         </div>
     </div>
+
 </main>
 
 <div id="loaderDIV"></div>

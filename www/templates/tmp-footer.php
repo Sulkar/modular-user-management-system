@@ -1,4 +1,4 @@
-<footer class="footer mt-auto py-3" style="background-color: #708090; color: white;">
+<footer class="footer mt-auto py-3 noPrint" style="background-color: #708090; color: white;" >
     <div class="container">
 
 
@@ -38,9 +38,11 @@
 
 
 <!-- JavaScript Bundle with Popper -->
-<script src="/js/bootstrap-5.2.0.bundle.min.js"></script>
 <script src="/js/jQuery-3.6.1.js"></script>
-<script src="/js/summernote-bs5.min.js"></script>
+<script src="/js/bootstrap-5.2.0.bundle.min.js"></script>
+<script src="/js/summernote-lite.min.js"></script>
+
+
 <script src="/js/global.js"></script>
 <script src="<?php echo $page_javascript ?>"></script>
 </body>

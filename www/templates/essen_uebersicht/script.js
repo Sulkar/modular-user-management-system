@@ -1,49 +1,36 @@
 /*
-  Essen bestellen Page Javascript
-  - needs schueler_essen table:
-  CREATE TABLE schueler_essen (
-    id int(11) NOT NULL AUTO_INCREMENT,
-    schueler_id int(11),
-    essen_id int(11),
-    tag varchar(15),
-    PRIMARY KEY (id),
-    UNIQUE KEY schueler_essen_UN (schueler_id, tag)
-  );
+  Essen Übersicht Page Javascript
+  required tables:
+  - schueler_essen
+  - students
+  - essen  
 */
 
 //global variables
 let CURRENT_TABLE_NAME = undefined;
 let CURRENT_COLUMN_NAMES = [];
 let CURRENT_TABLE_VALUES = [];
-let UPDATE_VALUES = [];
-let DELETE_VALUES = [];
-let CURRENT_EDIT_ESSEN_ID = undefined;
 
 let SELECTED_WEEK_NR = undefined;
 let SELECTED_WEEK_START = undefined;
 let SELECTED_WEEK_END = undefined;
 
-let CURRENCT_KLASSE = undefined;
+let CURRENCT_KLASSE = "Alle Klassen";
 let CURRENT_STUDENTS = [];
 let CURRENT_ESSEN_DATA = [];
+let CURRENT_KLASSEN_DATA = [];
 
 //start
 $(document).ready(function () {
   fillSelectWithWeeks();
-  globalGetSessionVariables().then(function (session) {
-    CURRENCT_KLASSE = session.klasse;
-    $("#klassenname").html(CURRENCT_KLASSE);
-    loadStudentData().then(function () {
-      loadEssenData().then(function () {
-        loadStudentEssenData();
-      });
-    });
+  loadClassesData().then(function () {
+    initData("alle");
   });
 });
 
 $("#btnDrucken").on("click", function () {
   //set file name with title
-  let filename = "Essensbestellung " + SELECTED_WEEK_NR + ". KW ";
+  let filename = "Übersicht Essen " + SELECTED_WEEK_NR + ". KW ";
   filename += new Date(SELECTED_WEEK_START).toLocaleDateString("de-DE", { month: "2-digit", day: "2-digit" });
   filename += " - ";
   filename += new Date(SELECTED_WEEK_END).toLocaleDateString("de-DE", { month: "2-digit", day: "2-digit", year: "numeric" });
@@ -60,13 +47,13 @@ function getIdsFromDataArray(dataArray) {
   return idArray;
 }
 
-function loadStudentEssenData() {
+async function loadStudentEssenData() {
   globalShowLoader("loaderDIV");
   CURRENT_TABLE_NAME = "schueler_essen";
   let loadStudentEssenQuery = "SELECT * FROM " + CURRENT_TABLE_NAME + " WHERE schueler_id IN (" + getIdsFromDataArray(CURRENT_STUDENTS).join() + ")";
   loadStudentEssenQuery += " AND tag >= '" + SELECTED_WEEK_START + "' AND tag <= '" + SELECTED_WEEK_END + "'";
 
-  (async () => {
+  await (async () => {
     let data = await globalDatabaseCRUD(loadStudentEssenQuery);
 
     globalHideLoader("loaderDIV");
@@ -83,6 +70,166 @@ function addStudentEssenToTable() {
   CURRENT_TABLE_VALUES.forEach((schuelerEssen) => {
     $("#radioId_" + schuelerEssen.essen_id + "_" + schuelerEssen.tag + "_" + schuelerEssen.schueler_id).prop("checked", true);
   });
+}
+
+function showEssenUebersicht() {
+  let dataTableUebersicht = document.getElementById("dataTableEssenUebersicht");
+  dataTableUebersicht.innerHTML = "";
+  let essenUbersichtTable = "<thead><tr>";
+  essenUbersichtTable += "<th>Essen</th>";
+  essenUbersichtTable += "<th>Datum</th>";
+  essenUbersichtTable += "<th>Anzahl</th>";
+  essenUbersichtTable += "</tr></thead>";
+  essenUbersichtTable += "<tbody>";
+
+  let gesamtCounter = 0;
+  const regexExpIsDate = /\d{4}-\d{2}-\d{2}/;
+
+  CURRENT_ESSEN_DATA.forEach((essen) => {
+    essenUbersichtTable += "<tr>";
+    essenUbersichtTable += "<td>" + essen.name + "</td>";
+    let tempDate = "";
+    if (regexExpIsDate.test(essen.tag)) {
+      tempDate = new Date(essen.tag);
+      const options = { month: "2-digit", day: "2-digit", year: "numeric" };
+      tempDate = tempDate.toLocaleDateString("de-DE", options);
+    }
+    essenUbersichtTable += "<td>" + tempDate + "</td>";
+    let tempEssenCount = 0;
+    if (essen.count != undefined) {
+      tempEssenCount = essen.count;
+    }
+    essenUbersichtTable += "<td>" + tempEssenCount + "</td>";
+    essenUbersichtTable += "</tr>";
+    gesamtCounter += tempEssenCount;
+  });
+
+  //gesamt Essen
+  essenUbersichtTable += "<tr>";
+  essenUbersichtTable += "<td style='font-weight: bolder;'>gesamt</td>";
+  essenUbersichtTable += "<td></td>";
+  essenUbersichtTable += "<td style='font-weight: bolder;'>" + gesamtCounter + "</td>";
+  essenUbersichtTable += "</tr>";
+
+  //gesamt Schüler
+  essenUbersichtTable += "<tr>";
+  essenUbersichtTable += "<td style='font-weight: bolder;'>Anzahl Schüler</td>";
+  essenUbersichtTable += "<td></td>";
+  let gesamtAnzahlSchueler = getSchuelerAnzahl(CURRENCT_KLASSE);
+  essenUbersichtTable += "<td style='font-weight: bolder;'>" + gesamtAnzahlSchueler + "</td>";
+  essenUbersichtTable += "</tr>";
+
+  essenUbersichtTable += "</tbody><br>";
+  dataTableUebersicht.innerHTML = essenUbersichtTable;
+}
+
+async function countEssenSchulerData() {
+  globalShowLoader("loaderDIV");
+  CURRENT_TABLE_NAME = "schueler_essen";
+  let loadStudentEssenQuery = "";
+  if (CURRENCT_KLASSE == "Alle Klassen") {
+    loadStudentEssenQuery = "SELECT * FROM " + CURRENT_TABLE_NAME + " WHERE tag >= '" + SELECTED_WEEK_START + "' AND tag <= '" + SELECTED_WEEK_END + "'";
+  } else {
+    loadStudentEssenQuery = "SELECT * FROM " + CURRENT_TABLE_NAME + " WHERE schueler_id IN (" + getIdsFromDataArray(CURRENT_STUDENTS).join() + ")";
+    loadStudentEssenQuery += " AND tag >= '" + SELECTED_WEEK_START + "' AND tag <= '" + SELECTED_WEEK_END + "'";
+  }
+  await (async () => {
+    let data = await globalDatabaseCRUD(loadStudentEssenQuery);
+
+    globalHideLoader("loaderDIV");
+    if (data["error"] == "") {
+      let essenCountData = data["result"];
+      addEssenCountToEssen(essenCountData);
+    } else {
+      globalShowError(data["error"]["errorInfo"]);
+    }
+  })();
+}
+
+async function addEssenCountToEssen(essenCountData) {
+  CURRENT_ESSEN_DATA.push({ id: 0, name: "kein Essen", tag: "" });
+  CURRENT_ESSEN_DATA.forEach((essen) => {
+    essenCountData.forEach((essenCount) => {
+      if (essen.id == essenCount.essen_id) {
+        if (essen.count == undefined) {
+          essen.count = 1;
+        } else {
+          essen.count = essen.count + 1;
+        }
+      }
+    });
+  });
+}
+
+async function loadClassesData() {
+  globalShowLoader("loaderDIV");
+  CURRENT_TABLE_NAME = "students";
+  let loadClassesQuery = "SELECT COUNT(id) AS 'schueler_gesamt', klasse FROM " + CURRENT_TABLE_NAME + " GROUP BY klasse";
+
+  await (async () => {
+    let data = await globalDatabaseCRUD(loadClassesQuery);
+    globalHideLoader("loaderDIV");
+    if (data["error"] == "") {
+      CURRENT_TABLE_VALUES = data["result"];
+      CURRENT_KLASSEN_DATA = data["result"];
+      fillSelectWithClasses();
+    } else {
+      globalShowError(data["error"]["errorInfo"]);
+    }
+  })();
+}
+
+function getSchuelerAnzahl(klasse) {
+  let anzahl = 0;
+  CURRENT_KLASSEN_DATA.forEach((data) => {
+    if (klasse == "Alle Klassen") {
+      anzahl += data.schueler_gesamt;
+    } else {
+      if (klasse == data.klasse) anzahl += data.schueler_gesamt;
+    }
+  });
+  return anzahl;
+}
+
+function fillSelectWithClasses() {
+  //fill select with values
+  $("#selectEssenUebersichtKlasse").append('<option value="Alle Klassen">Alle Klassen</option>');
+  CURRENT_TABLE_VALUES.forEach((value) => {
+    $("#selectEssenUebersichtKlasse").append('<option value="' + value.klasse + '">' + value.klasse + "</option>");
+  });
+  $("#selectEssenUebersichtKlasse option[value='Alle Klassen']").prop("selected", true);
+}
+
+$("#selectEssenUebersichtKlasse").on("change", function () {
+  let selectedClass = this.value;
+  CURRENCT_KLASSE = selectedClass;
+
+  if (CURRENCT_KLASSE == "Alle Klassen") {
+    initData("alle");
+  } else {
+    initData("klasse");
+  }
+});
+
+function initData(type) {
+  if (type == "klasse") {
+    loadStudentData().then(function () {
+      loadEssenData().then(function () {
+        loadStudentEssenData().then(function () {
+          countEssenSchulerData().then(function () {
+            showEssenUebersicht();
+          });
+        });
+      });
+    });
+  } else if ((type = "alle")) {
+    loadEssenData().then(function () {
+      countEssenSchulerData().then(function () {
+        showEssenUebersicht();
+        resetDataTable("dataTable");
+      });
+    });
+  }
 }
 
 function fillSelectWithWeeks() {
@@ -114,18 +261,18 @@ function fillSelectWithWeeks() {
   }
 
   //fill select with values
-  $("#selectEssenVerwaltenWoche").append('<option value="' + 0 + '">Alle Wochen anzeigen </option>');
+  $("#selectEssenUebersichtWoche").append('<option value="' + 0 + '">Alle Wochen anzeigen </option>');
   for (var index = 0; index < data.length; index++) {
-    $("#selectEssenVerwaltenWoche").append('<option value="' + data[index].wochennr + '">' + data[index].woche + " " + data[index].start + " - " + data[index].end + "</option>");
+    $("#selectEssenUebersichtWoche").append('<option value="' + data[index].wochennr + '">' + data[index].woche + " " + data[index].start + " - " + data[index].end + "</option>");
   }
-  $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "']").prop("selected", true);
-  $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "']").addClass("currentOption");
+  $("#selectEssenUebersichtWoche option[value='" + currentWeekNumber + "']").prop("selected", true);
+  $("#selectEssenUebersichtWoche option[value='" + currentWeekNumber + "']").addClass("currentOption");
   SELECTED_WEEK_NR = currentWeekNumber;
   SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(currentWeekNumber, 2022));
   SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(currentWeekNumber, 2022));
 }
 
-$("#selectEssenVerwaltenWoche").on("change", function () {
+$("#selectEssenUebersichtWoche").on("change", function () {
   let selectedWeek = this.value;
   SELECTED_WEEK_NR = this.value;
   if (selectedWeek == 0) {
@@ -136,11 +283,12 @@ $("#selectEssenVerwaltenWoche").on("change", function () {
     SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(selectedWeek, 2022));
     SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(selectedWeek, 2022));
   }
-  loadStudentData().then(function () {
-    loadEssenData().then(function () {
-      loadStudentEssenData();
-    });
-  });
+
+  if (CURRENCT_KLASSE == "Alle Klassen") {
+    initData("alle");
+  } else {
+    initData("klasse");
+  }
 });
 
 function formatDateForSql(date) {
@@ -287,16 +435,6 @@ function createEssenDataTable(tableId, dataValues, columnNames) {
 }
 
 function initRadioEvents() {
-  //add on change event to radio controls
-  $(".essenRadio").on("change", function () {
-    let tempStudentId = $(this).parent().attr("id").split("_")[0];
-    let tempEssenId = $(this).data("essenid");
-    let tempTag = $(this).parent().attr("id").split("_")[1];
-    //console.log("student id: " + tempStudentId);
-    //console.log("essen id: " + tempEssenId);
-    //console.log("tag: " + tempTag);
-    updateEssenAuswahl(tempStudentId, tempEssenId, tempTag);
-  });
   //add on click essen link events
   $(".essenModalLink").on("click", function () {
     let clickedEssen = findEssenDataById($(this).attr("id").split("_")[1]);
@@ -320,7 +458,7 @@ function createKeinEssenRadio(sqlFormatDate, studentId) {
   let keinEssenRadio = "";
   keinEssenRadio += "<input class='form-check-input essenRadio typ3 " + sqlFormatDate + "' type='radio' id='radioId_" + essenId + "_" + sqlFormatDate + "_" + studentId + "'";
   keinEssenRadio += " data-essenid='0'";
-  keinEssenRadio += " name='grp-" + sqlFormatDate + "-" + studentId + "' >";
+  keinEssenRadio += " name='grp-" + sqlFormatDate + "-" + studentId + "' disabled>";
   keinEssenRadio += " <label class='form-check-label typ3 " + sqlFormatDate + "' for='radioId_" + essenId + "_" + sqlFormatDate + "_" + studentId + "'>kein Essen</label>";
   return keinEssenRadio;
 }
@@ -329,7 +467,7 @@ function createEssenRadio(essen, studentId) {
   let essenRadio = "";
   essenRadio += "<input class='form-check-input essenRadio " + essen.tag + "' type='radio' id='radioId_" + essen.id + "_" + essen.tag + "_" + studentId + "'";
   essenRadio += " data-essenid='" + essen.id + "'";
-  essenRadio += " name='grp-" + essen.tag + "-" + studentId + "' >";
+  essenRadio += " name='grp-" + essen.tag + "-" + studentId + "' disabled>";
   essenRadio += " <a class='essenModalLink' id='essenId_" + essen.id + "' href='#' data-bs-toggle='modal' data-bs-target='#modalEssenAnzeigen'>" + essen.name + "</a>";
   return essenRadio;
 }
@@ -350,7 +488,6 @@ function updateEssenAuswahl(studentId, essenId, tag) {
 
 async function loadEssenData() {
   globalShowLoader("loaderDIV");
-
   CURRENT_TABLE_NAME = "essen";
   let loadEssenQuery = "SELECT * FROM " + CURRENT_TABLE_NAME + " WHERE tag >= '" + SELECTED_WEEK_START + "' AND tag <= '" + SELECTED_WEEK_END + "' ORDER BY tag;";
 

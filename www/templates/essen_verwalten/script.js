@@ -23,9 +23,30 @@ let SELECTED_WEEK_END = undefined;
 //start
 $(document).ready(function () {
   fillSelectWithWeeks();
-  $("#summernote").summernote({ callbacks: { onImageUpload: onImageUploadFunc("#summernote") } });
-  $("#summernoteEdit").summernote({ callbacks: { onImageUpload: onImageUploadFunc("#summernoteEdit") } });
+  $("#summernote").summernote({
+    toolbar: [
+      ["style", ["bold", "underline"]],
+      ["fontsize", ["fontsize"]],
+      ["color", ["color"]],
+      ["para", ["ul", "ol", "paragraph"]],
+    ],
+    callbacks: { onImageUpload: onImageUploadFunc("#summernote") },
+  });
+
+  $("#summernoteEdit").summernote({
+    toolbar: [
+      ["style", ["bold", "underline"]],
+      ["fontsize", ["fontsize"]],
+      ["color", ["color"]],
+      ["para", ["ul", "ol", "paragraph"]],
+    ],
+    callbacks: { onImageUpload: onImageUploadFunc("#summernoteEdit") },
+  });
   loadDataData();
+});
+
+$("#btnDrucken").on("click", function () {
+  window.print();
 });
 
 //summernote auto resize image
@@ -266,7 +287,6 @@ $("#btnEssenAendern").on("click", function () {
 
   (async () => {
     let data = await globalDatabaseCRUD(sqlQuery);
-    console.log(data);
     if (data["error"] == "") {
       // fill DOM with data
       globalShowSuccess("Essen wurde geändert.");

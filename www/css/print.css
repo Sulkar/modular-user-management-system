@@ -1,0 +1,35 @@
+.print {
+  display: none;
+}
+@media print {
+  table {
+    font-size: 12px;
+  }
+  .print {
+    display: block;
+  }
+  .noPrint {
+    display: none;
+  }
+  #mainBody {
+    margin-top: -100px;
+  }
+  #pageFooter {
+    display: none;
+  }
+  #pageNavbar {
+    display: none;
+  }
+  a {
+    color: black;
+    text-decoration: none;
+  }
+  .form-check-label {
+    color: black;
+    opacity: 1 !important;
+  }
+  .form-check-input:checked {
+    background-color: black;
+    border-color: black;
+  }
+}

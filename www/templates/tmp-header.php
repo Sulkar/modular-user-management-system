@@ -7,8 +7,10 @@
     <title>simple UMS</title>
     <!-- CSS only -->
     <link href="/css/bootstrap-5.2.0.min.css" rel="stylesheet">
-    <link href="/css/summernote-bs5.min.css" rel="stylesheet">
+    <link href="/css/summernote-lite.min.css" rel="stylesheet">
+
     <link href="/css/index.css" rel="stylesheet">
+    <link href="/css/print.css" rel="stylesheet">
     <link href="<?php if (isset($page_css)) {
                     echo $page_css;
                 } ?>" rel="stylesheet">
@@ -16,7 +18,7 @@
 
 <body class="d-flex flex-column h-100">
 
-    <nav class="navbar navbar-expand-md fixed-top navbar-light" style="background-color: white; border-bottom: 3px solid #198754;">
+    <nav class="navbar navbar-expand-md fixed-top navbar-light noPrint" style="background-color: white; border-bottom: 3px solid #198754;">
         <div class="container-fluid">
 
 
@@ -70,6 +72,10 @@
 
                         <li class="nav-item">
                             <a class="nav-link text-dark" aria-current="page" href="./data.php">Data</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" aria-current="page" href="./essen_uebersicht.php">Essen Übersicht</a>
                         </li>
 
                         <li class="nav-item">
