@@ -11,6 +11,9 @@
 
                 </select>
             </div>
+            <div class="col-md-4">
+                <span id="letzterBestelltag"></span>
+            </div>
             <div class="col-md-2">
                 <button type="button" class="btn btn-success noPrint" id="btnDrucken">drucken</button>
             </div>

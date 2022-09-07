@@ -36,6 +36,7 @@ $(document).ready(function () {
     loadStudentData().then(function () {
       loadEssenData().then(function () {
         loadStudentEssenData();
+        setLastEditDay();
       });
     });
   });
@@ -139,6 +140,7 @@ $("#selectEssenVerwaltenWoche").on("change", function () {
   loadStudentData().then(function () {
     loadEssenData().then(function () {
       loadStudentEssenData();
+      setLastEditDay();
     });
   });
 });
@@ -315,12 +317,38 @@ function fillModalEssenAnzeigenWithData(essenData) {
   $("#modalEssenAnzeigen_Beschreibung").html(essenData.beschreibung);
 }
 
+function setLastEditDay() {
+  let lastEditDay = getLastEditDay();
+  lastEditDay = lastEditDay.toLocaleDateString("de-DE", { month: "2-digit", day: "2-digit", year: "numeric" });
+  $("#letzterBestelltag").html("Letzte Bestellmöglichkeit: " + lastEditDay);
+}
+
+function getLastEditDay() {
+  //firstDayOfWeek - 4 = Montag - 4 = Donnerstag
+  let lastEditDay = new Date(SELECTED_WEEK_START);
+  lastEditDay.setDate(lastEditDay.getDate() - 4);
+  return lastEditDay;
+}
+
+function kannEssenNochBestelltWerden() {
+  let currentDay = new Date();
+  if (currentDay <= getLastEditDay()) {
+    //console.log("true " + lastEditDay);
+    return true;
+  } else {
+    //console.log("false " + lastEditDay);
+    return false;
+  }
+}
+
 function createKeinEssenRadio(sqlFormatDate, studentId) {
   let essenId = 0;
   let keinEssenRadio = "";
   keinEssenRadio += "<input class='form-check-input essenRadio typ3 " + sqlFormatDate + "' type='radio' id='radioId_" + essenId + "_" + sqlFormatDate + "_" + studentId + "'";
   keinEssenRadio += " data-essenid='0'";
-  keinEssenRadio += " name='grp-" + sqlFormatDate + "-" + studentId + "' >";
+  keinEssenRadio += " name='grp-" + sqlFormatDate + "-" + studentId + "'";
+  if (kannEssenNochBestelltWerden()) keinEssenRadio += " >";
+  else keinEssenRadio += " disabled>";
   keinEssenRadio += " <label class='form-check-label typ3 " + sqlFormatDate + "' for='radioId_" + essenId + "_" + sqlFormatDate + "_" + studentId + "'>kein Essen</label>";
   return keinEssenRadio;
 }
@@ -329,7 +357,9 @@ function createEssenRadio(essen, studentId) {
   let essenRadio = "";
   essenRadio += "<input class='form-check-input essenRadio " + essen.tag + "' type='radio' id='radioId_" + essen.id + "_" + essen.tag + "_" + studentId + "'";
   essenRadio += " data-essenid='" + essen.id + "'";
-  essenRadio += " name='grp-" + essen.tag + "-" + studentId + "' >";
+  essenRadio += " name='grp-" + essen.tag + "-" + studentId + "'";
+  if (kannEssenNochBestelltWerden()) essenRadio += " >";
+  else essenRadio += " disabled>";
   essenRadio += " <a class='essenModalLink' id='essenId_" + essen.id + "' href='#' data-bs-toggle='modal' data-bs-target='#modalEssenAnzeigen'>" + essen.name + "</a>";
   return essenRadio;
 }

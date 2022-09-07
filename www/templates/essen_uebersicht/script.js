@@ -25,6 +25,7 @@ $(document).ready(function () {
   fillSelectWithWeeks();
   loadClassesData().then(function () {
     initData("alle");
+    setLastEditDay();
   });
 });
 
@@ -38,6 +39,19 @@ $("#btnDrucken").on("click", function () {
   document.title = filename;
   window.print();
 });
+
+function setLastEditDay() {
+  let lastEditDay = getLastEditDay();
+  lastEditDay = lastEditDay.toLocaleDateString("de-DE", { month: "2-digit", day: "2-digit", year: "numeric" });
+  $("#letzterBestelltag").html("Letzte Bestellmöglichkeit: " + lastEditDay);
+}
+
+function getLastEditDay() {
+  //firstDayOfWeek - 4 = Montag - 4 = Donnerstag
+  let lastEditDay = new Date(SELECTED_WEEK_START);
+  lastEditDay.setDate(lastEditDay.getDate() - 4);
+  return lastEditDay;
+}
 
 function getIdsFromDataArray(dataArray) {
   let idArray = [];
@@ -289,6 +303,7 @@ $("#selectEssenUebersichtWoche").on("change", function () {
   } else {
     initData("klasse");
   }
+  setLastEditDay();
 });
 
 function formatDateForSql(date) {
