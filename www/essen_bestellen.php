@@ -23,5 +23,5 @@ print $tpl->render('tmp-header', array(
 print $tpl->render('/essen_bestellen/body', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript' => '/templates/essen_bestellen/script.js'
+    'page_javascript1' => '/templates/essen_bestellen/script.js'
 ));

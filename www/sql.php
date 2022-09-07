@@ -23,6 +23,6 @@ print $tpl->render('tmp-header', array(
 print $tpl->render('/sql/body', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript' => '/templates/sql/script.js',
+    'page_javascript1' => '/templates/sql/script.js',
 
 ));

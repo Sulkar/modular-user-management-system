@@ -1,4 +1,4 @@
-<footer class="footer mt-auto py-3 noPrint" style="background-color: #708090; color: white;" >
+<footer class="footer mt-auto py-3 noPrint" style="background-color: #708090; color: white;">
     <div class="container">
 
 
@@ -44,7 +44,13 @@
 
 
 <script src="/js/global.js"></script>
-<script src="<?php echo $page_javascript ?>"></script>
+<script src="<?php if (isset($page_javascript1)) {
+                    echo $page_javascript1;
+                } ?>"></script>
+<script src="<?php if (isset($page_javascript2)) {
+                    echo $page_javascript2;
+                } ?>"></script>
+
 </body>
 
 </html>

@@ -51,8 +51,8 @@ if (empty($username_err) && empty($password_err)) {
                         $username = $row["username"];
                         $db_password = $row["password"];
 
-                        //if (password_verify($password, $hashed_password)) {
-                        if ($password == $db_password) {
+                        if (password_verify($password, $db_password)) {
+                        //if ($password == $db_password) {
 
                             session_start();
                             // Store data in session variables

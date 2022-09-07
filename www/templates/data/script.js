@@ -41,6 +41,25 @@ function loadDataData() {
   })();
 }
 
+$("#btnCreateMd5Hash").on("click", function () {
+  let normalString = $("#txtMd5Normal").val();
+
+  fetch("/templates/data/get_password_hash.php", {
+    method: "post",
+    body: JSON.stringify(normalString),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .then((data) => {
+      //
+      $("#txtMd5Hash").val(data.password_hash);
+    });
+});
+
 async function fillModalWithTableColumns(CURRENT_TABLE_NAME) {
   let columns = await globalGetColumnNames(CURRENT_TABLE_NAME);
   document.getElementById("columnsSpan").innerHTML = "" + columns.join(", ").replace("id, ", "");

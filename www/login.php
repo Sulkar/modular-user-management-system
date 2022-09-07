@@ -15,6 +15,6 @@ print $tpl->render('tmp-header', array('page_css' => '/templates/login/style.css
 print $tpl->render('/login/body', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript' => '/templates/login/script.js'
+    'page_javascript1' => '/templates/login/script.js'
 ));
 

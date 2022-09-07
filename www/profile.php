@@ -21,5 +21,5 @@ print $tpl->render('tmp-header', array('page_css' => '/templates/profile/style.c
 print $tpl->render('/profile/body', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript' => '/templates/profile/script.js'
+    'page_javascript1' => '/templates/profile/script.js'
 ));
