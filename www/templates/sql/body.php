@@ -20,7 +20,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <textarea class="form-control" id="txtSQLData" rows="3">SELECT * FROM users</textarea>
+                        <textarea class="form-control" id="txtSQLData" rows="8">SELECT * FROM users</textarea>
                     </div>
                 </div>
                 <br>

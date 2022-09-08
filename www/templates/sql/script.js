@@ -10,7 +10,7 @@ $("#btnSqlRemoveColumn").on("click", function () {
   $("#txtSQLData").val("ALTER TABLE users DROP COLUMN klasse;");
 });
 $("#btnSqlCreateTable").on("click", function () {
-  $("#txtSQLData").val("CREATE TABLE students (id INT(6) AUTO_INCREMENT PRIMARY KEY, firstname VARCHAR(30), lastname VARCHAR(30), email VARCHAR(50));");
+  $("#txtSQLData").val("CREATE TABLE students (\n id INT(6) AUTO_INCREMENT PRIMARY KEY,\n firstname VARCHAR(30),\n lastname VARCHAR(30),\n email VARCHAR(50)\n);");
 });
 $("#btnSqlDeleteTable").on("click", function () {
   $("#txtSQLData").val("DROP TABLE students;");

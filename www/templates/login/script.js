@@ -1,5 +1,17 @@
 /*
   Login Page Javascript
+  required tables:
+  - users
+
+  CREATE TABLE users (
+    id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username varchar(100) DEFAULT NULL,
+    password varchar(100) DEFAULT NULL,
+    email varchar(100) DEFAULT NULL,
+    klasse varchar(10) DEFAULT NULL,
+    role varchar(15) DEFAULT NULL
+  )
+
 */
 
 //Login Button

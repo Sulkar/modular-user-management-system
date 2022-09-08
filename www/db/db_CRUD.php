@@ -15,7 +15,7 @@ $results["error"]["errorInfo"] = "Database access denied!";
 
 session_start();
 //1)user must be logged in to do CRUD operations
-if (!isset($_SESSION["loggedIn"]) && !$_SESSION["loggedIn"] === true) {
+if (!isset($_SESSION["loggedIn"]) && !$_SESSION["loggedIn"] === true && !isset($_SESSION["role"])) {
     exit;
 }
 
@@ -26,20 +26,27 @@ if (!isset($_SESSION["loggedIn"]) && !$_SESSION["loggedIn"] === true) {
     - create (admin)
     - alter (admin)
 */
-$sqlSelect = false;
+
+$sqlSelect = true;
 $sqlUpdate = false;
-$sqlDelete = true;
+$sqlDelete = false;
 $sqlCreate = false;
 $sqlAlter = false;
+$sqlInsert = false;
 
 //2)user has role admin
 if ($sqlUpdate) {
-    if (isset($_SESSION["role"]) && ($_SESSION["role"] === "lehrer" || $_SESSION["role"] === "admin")) {
+    if (in_array($_SESSION["role"], array("lehrer", "admin", "mensa"))) {
         $userHasPermission = true;
     }
 } else if ($sqlDelete) {
 
-    if (isset($_SESSION["role"]) && ($_SESSION["role"] === "admin")) {
+    if (in_array($_SESSION["role"], array("mensa", "admin"))) {
+        $userHasPermission = true;
+    }
+} else if ($sqlSelect) {
+
+    if (in_array($_SESSION["role"], array("lehrer", "admin", "mensa"))) {
         $userHasPermission = true;
     }
 }

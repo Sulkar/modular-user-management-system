@@ -5,7 +5,8 @@
 
 
         <div class="row">
-
+            
+            <!--
             <div class="col-md-4">
                 <h5>Docs</h5>
                 <ul class="nav flex-column">
@@ -32,6 +33,7 @@
                 Copyright © 20...
             </div>
         </div>
+        -->
 </footer>
 </div>
 </footer>

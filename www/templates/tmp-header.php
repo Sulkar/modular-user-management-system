@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>simple UMS</title>
+    <title>Essensbestellung MSUSH</title>
     <!-- CSS only -->
     <link href="/css/bootstrap-5.2.0.min.css" rel="stylesheet">
     <link href="/css/summernote-lite.min.css" rel="stylesheet">
@@ -24,10 +24,10 @@
 
             <a class="navbar__brand" href="/">
                 <div class="navbar__logo">
-                    <img src="./images/image_placeholder.png" alt="Docusaurus Logo" height="32" width="32">
+                    <img src="./images/msush.png" alt="Docusaurus Logo" height="32" width="32">
                 </div>
                 <div class="navbar__title fw-bold">
-                    User Management system
+                    Essensbestellung MS USH
                 </div>
 
             </a>
@@ -37,17 +37,20 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
+                <!-- Navbar left -->
                 <ul class="navbar-nav me-2 mb-2 mb-md-0">
-                    <li class="nav-item">
+
+                    <!--  <li class="nav-item">
                         <a class="nav-link text-dark" aria-current="page" href="#">Page1</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="#">Page2</a>
-                    </li>
+                    </li> -->
 
                 </ul>
+                <!-- search input -->
                 <form class="d-flex me-auto" style="margin:0;">
-
+                    <!--
                     <div class="input-group me-2">
                         <input type="text" class="form-control" placeholder="Code" aria-label="Recipient's username" aria-describedby="button-addon2" style="width:80px; height:30px">
                         <button class="btn btn-outline-secondary py-1" type="button" id="button-addon2" style="height:30px;">
@@ -56,7 +59,7 @@
                             </svg>
                         </button>
                     </div>
-
+                    -->
                 </form>
 
 
@@ -64,28 +67,36 @@
                 <ul class="navbar-nav me-2 mb-2 mb-md-0">
 
                     <!-- user logged in -->
-                    <?php if (isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true) { ?>
+                    <?php if (isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true && isset($_SESSION["role"])) { ?>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" aria-current="page" href="./sql.php">SQL</a>
-                        </li>
+                        <!-- admin -->
+                        <?php if (in_array($_SESSION["role"], array("admin"))) { ?>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" aria-current="page" href="./sql.php">SQL</a>
+                            </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" aria-current="page" href="./data.php">Data</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" aria-current="page" href="./data.php">Data</a>
+                            </li>
+                        <?php }  ?>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" aria-current="page" href="./essen_uebersicht.php">Essen Übersicht</a>
-                        </li>
+                        <!-- mensa -->
+                        <?php if (in_array($_SESSION["role"], array("mensa", "admin"))) { ?>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" aria-current="page" href="./essen_uebersicht.php">Essen Übersicht</a>
+                            </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" aria-current="page" href="./essen_verwalten.php">Essen verwalten</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" aria-current="page" href="./essen_verwalten.php">Essen verwalten</a>
+                            </li>
+                        <?php }  ?>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" aria-current="page" href="./essen_bestellen.php">Essen bestellen</a>
-                        </li>
-
+                        <!-- lehrer -->
+                        <?php if (in_array($_SESSION["role"], array("lehrer", "admin"))) { ?>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" aria-current="page" href="./essen_bestellen.php">Essen bestellen</a>
+                            </li>
+                        <?php }  ?>
 
 
                         <li class="nav-item dropdown">

@@ -1,12 +1,14 @@
 /*
   Essen verwalten Page Javascript
-  - needs essen table
+   required tables:
+  - essen
+
   CREATE TABLE essen (
     id INT(6) AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150),
     tag VARCHAR(150),
     beschreibung LONGTEXT
-  )
+  );
 */
 
 //global variables

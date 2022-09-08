@@ -10,10 +10,10 @@ session_start();
 // Templates
 $tpl = new Template('./templates/');
 // Header
-print $tpl->render('tmp-header', array('page_css' => '/templates/index/style.css'));
+print $tpl->render('tmp-header', array('page_css' => '/templates/index_msush/style.css'));
 // Body
-print $tpl->render('/index/body', array());
+print $tpl->render('/index_msush/body', array());
 // Footer
 print $tpl->render('tmp-footer', array(
-    'page_javascript1' => '/templates/index/script.js'
+    'page_javascript1' => '/templates/index_msush/script.js'
 ));

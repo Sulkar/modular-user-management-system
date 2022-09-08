@@ -1,6 +1,6 @@
 <?php
 /*
-    Page: SQL
+    Page: Essen verwalten
 */
 require_once('./templates/Template.php');
 

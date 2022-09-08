@@ -10,13 +10,13 @@
             <div class="col-md-4">
 
                 <h1 class="mb-3">Login</h1>
-                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>
+                <p></p>
 
                 <div id="loginForm" class="" style="">
                     <form class="form-inline text-center" role="form">
                         <div class="form-group">
-                            <input id="login_username" placeholder="Benutzername" class="form-control mb-1" type="" name="username" value="admin">
-                            <input id="login_password" placeholder="Passwort" class="form-control mb-1" minlength="4" type="password" name="password" value="tester">
+                            <input id="login_username" placeholder="Benutzername" class="form-control mb-1" type="" name="username" value="">
+                            <input id="login_password" placeholder="Passwort" class="form-control mb-1" minlength="4" type="password" name="password" value="">
                             <button type="button" class="btn btn-secondary" id="loginButton">Login</button>
                         </div>
                     </form>

@@ -9,6 +9,7 @@ You can find templates in /www/templates/. The following templates are currently
 - data 
 - essen verwalten
 - essen bestellen
+- essen übersicht
 
 ## Docker setup
 - download Docker
@@ -35,6 +36,7 @@ You can find templates in /www/templates/. The following templates are currently
 ## Infos
 - [https://www.sitepoint.com/docker-php-development-environment/](https://www.sitepoint.com/docker-php-development-environment/)
 - used libraries:
+  - <a href="https://de.freepik.com/vektoren-kostenlos/niedliches-besteck-und-teller-set-design-element_14547819.htm#query=essen&position=37&from_view=search">Bild von rawpixel.com</a> auf Freepik
   - jQuery
   - bootstrap
   - summernote

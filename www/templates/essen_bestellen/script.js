@@ -1,14 +1,32 @@
 /*
   Essen bestellen Page Javascript
-  - needs schueler_essen table:
-  CREATE TABLE schueler_essen (
-    id int(11) NOT NULL AUTO_INCREMENT,
+  required tables:
+  - schueler_essen
+  - students
+  - essen  
+
+ CREATE TABLE schueler_essen (
+    id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     schueler_id int(11),
     essen_id int(11),
     tag varchar(15),
-    PRIMARY KEY (id),
     UNIQUE KEY schueler_essen_UN (schueler_id, tag)
   );
+
+  CREATE TABLE students (
+    id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    firstname varchar(100) DEFAULT NULL,
+    lastname varchar(100) DEFAULT NULL,
+    klasse varchar(10) DEFAULT NULL
+  );
+
+   CREATE TABLE essen (
+    id INT(6) AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150),
+    tag VARCHAR(150),
+    beschreibung LONGTEXT
+  );
+
 */
 
 //global variables
@@ -332,7 +350,8 @@ function getLastEditDay() {
 
 function kannEssenNochBestelltWerden() {
   let currentDay = new Date();
-  if (currentDay <= getLastEditDay()) {
+
+  if (currentDay.setHours(0, 0, 0, 0) <= getLastEditDay().setHours(0, 0, 0, 0)) {
     //console.log("true " + lastEditDay);
     return true;
   } else {
