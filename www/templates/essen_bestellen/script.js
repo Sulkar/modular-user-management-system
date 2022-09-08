@@ -40,6 +40,7 @@ let CURRENT_EDIT_ESSEN_ID = undefined;
 let SELECTED_WEEK_NR = undefined;
 let SELECTED_WEEK_START = undefined;
 let SELECTED_WEEK_END = undefined;
+let DAYS = ["Mo", "Di", "Mi", "Do"];
 
 let CURRENCT_KLASSE = undefined;
 let CURRENT_STUDENTS = [];
@@ -207,7 +208,7 @@ async function loadStudentData() {
   let loadStudentQuery = "SELECT id, firstname, lastname FROM " + CURRENT_TABLE_NAME + " WHERE klasse = '" + CURRENCT_KLASSE + "' ORDER BY lastname;";
 
   await (async () => {
-    CURRENT_COLUMN_NAMES = ["Name", "Mo", "Di", "Mi", "Do", "Fr"]; //await globalGetColumnNames(CURRENT_TABLE_NAME);
+    CURRENT_COLUMN_NAMES = ["Name"].concat(DAYS); //await globalGetColumnNames(CURRENT_TABLE_NAME);
     let data = await globalDatabaseCRUD(loadStudentQuery);
 
     globalHideLoader("loaderDIV");
@@ -290,8 +291,7 @@ function createEssenDataTable(tableId, dataValues, columnNames) {
       }
     });
     //radio buttons essen mo-fr
-    const days = ["Mo", "Di", "Mi", "Do", "Fr"];
-    days.forEach((day) => {
+    DAYS.forEach((day) => {
       let sqlFormatDate = formatDateForSql(dayDateMap[day]);
       //add combo
       essenTable += "<td class='" + sqlFormatDate + "' id='" + currentStudentId + "_" + sqlFormatDate + "'>";

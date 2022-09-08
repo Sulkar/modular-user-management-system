@@ -37,18 +37,24 @@ let CURRENT_TABLE_VALUES = [];
 let SELECTED_WEEK_NR = undefined;
 let SELECTED_WEEK_START = undefined;
 let SELECTED_WEEK_END = undefined;
+let DAYS = ["Mo", "Di", "Mi", "Do"];
 
 let CURRENCT_KLASSE = "Alle Klassen";
 let CURRENT_STUDENTS = [];
 let CURRENT_ESSEN_DATA = [];
 let CURRENT_KLASSEN_DATA = [];
 
+let CURRENT_USER_ROLE = undefined;
+
 //start
 $(document).ready(function () {
   fillSelectWithWeeks();
-  loadClassesData().then(function () {
-    initData("alle");
-    setLastEditDay();
+  globalGetSessionVariables().then(function (session) {
+    CURRENT_USER_ROLE = session.role;
+    loadClassesData().then(function () {
+      initData("alle");
+      setLastEditDay();
+    });
   });
 });
 
@@ -373,7 +379,7 @@ async function loadStudentData() {
   let loadStudentQuery = "SELECT id, firstname, lastname FROM " + CURRENT_TABLE_NAME + " WHERE klasse = '" + CURRENCT_KLASSE + "' ORDER BY lastname;";
 
   await (async () => {
-    CURRENT_COLUMN_NAMES = ["Name", "Mo", "Di", "Mi", "Do", "Fr"]; //await globalGetColumnNames(CURRENT_TABLE_NAME);
+    CURRENT_COLUMN_NAMES = ["Name"].concat(DAYS); //await globalGetColumnNames(CURRENT_TABLE_NAME);
     let data = await globalDatabaseCRUD(loadStudentQuery);
 
     globalHideLoader("loaderDIV");
@@ -456,8 +462,7 @@ function createEssenDataTable(tableId, dataValues, columnNames) {
       }
     });
     //radio buttons essen mo-fr
-    const days = ["Mo", "Di", "Mi", "Do", "Fr"];
-    days.forEach((day) => {
+    DAYS.forEach((day) => {
       let sqlFormatDate = formatDateForSql(dayDateMap[day]);
       //add combo
       essenTable += "<td class='" + sqlFormatDate + "' id='" + currentStudentId + "_" + sqlFormatDate + "'>";
@@ -473,6 +478,19 @@ function createEssenDataTable(tableId, dataValues, columnNames) {
 }
 
 function initRadioEvents() {
+  //add on change event to radio controls
+  $(".essenRadio").on("change", function () {
+    let tempStudentId = $(this).parent().attr("id").split("_")[0];
+    let tempEssenId = $(this).data("essenid");
+    let tempTag = $(this).parent().attr("id").split("_")[1];
+    //console.log("student id: " + tempStudentId);
+    //console.log("essen id: " + tempEssenId);
+    //console.log("tag: " + tempTag);
+    updateEssenAuswahl(tempStudentId, tempEssenId, tempTag).then(function () {
+      //display updated data
+      initData("klasse");
+    });
+  });
   //add on click essen link events
   $(".essenModalLink").on("click", function () {
     let clickedEssen = findEssenDataById($(this).attr("id").split("_")[1]);
@@ -496,7 +514,12 @@ function createKeinEssenRadio(sqlFormatDate, studentId) {
   let keinEssenRadio = "";
   keinEssenRadio += "<input class='form-check-input essenRadio typ3 " + sqlFormatDate + "' type='radio' id='radioId_" + essenId + "_" + sqlFormatDate + "_" + studentId + "'";
   keinEssenRadio += " data-essenid='0'";
-  keinEssenRadio += " name='grp-" + sqlFormatDate + "-" + studentId + "' disabled>";
+  if (CURRENT_USER_ROLE == "admin") {
+    keinEssenRadio += " name='grp-" + sqlFormatDate + "-" + studentId + "' >";
+  } else {
+    keinEssenRadio += " name='grp-" + sqlFormatDate + "-" + studentId + "' disabled>";
+  }
+
   keinEssenRadio += " <label class='form-check-label typ3 " + sqlFormatDate + "' for='radioId_" + essenId + "_" + sqlFormatDate + "_" + studentId + "'>kein Essen</label>";
   return keinEssenRadio;
 }
@@ -505,16 +528,20 @@ function createEssenRadio(essen, studentId) {
   let essenRadio = "";
   essenRadio += "<input class='form-check-input essenRadio " + essen.tag + "' type='radio' id='radioId_" + essen.id + "_" + essen.tag + "_" + studentId + "'";
   essenRadio += " data-essenid='" + essen.id + "'";
-  essenRadio += " name='grp-" + essen.tag + "-" + studentId + "' disabled>";
+  if (CURRENT_USER_ROLE == "admin") {
+    essenRadio += " name='grp-" + essen.tag + "-" + studentId + "' >";
+  } else {
+    essenRadio += " name='grp-" + essen.tag + "-" + studentId + "' disabled>";
+  }
   essenRadio += " <a class='essenModalLink' id='essenId_" + essen.id + "' href='#' data-bs-toggle='modal' data-bs-target='#modalEssenAnzeigen'>" + essen.name + "</a>";
   return essenRadio;
 }
 
-function updateEssenAuswahl(studentId, essenId, tag) {
+async function updateEssenAuswahl(studentId, essenId, tag) {
   let sqlQuery = "INSERT INTO schueler_essen(schueler_id, essen_id, tag) VALUES(" + studentId + "," + essenId + ",'" + tag + "')";
   sqlQuery += " ON DUPLICATE KEY UPDATE schueler_id = " + studentId + ", essen_id = " + essenId + ", tag = '" + tag + "'";
 
-  (async () => {
+  await (async () => {
     let data = await globalDatabaseCRUD(sqlQuery);
     if (data["error"] == "") {
       // success
