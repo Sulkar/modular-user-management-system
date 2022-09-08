@@ -2,7 +2,7 @@
   Essen bestellen Page Javascript
   required tables:
   - schueler_essen
-  - students
+  - schueler
   - essen  
 
  CREATE TABLE schueler_essen (
@@ -13,17 +13,25 @@
     UNIQUE KEY schueler_essen_UN (schueler_id, tag)
   );
 
-  CREATE TABLE students (
+  CREATE TABLE schueler (
     id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     firstname varchar(100) DEFAULT NULL,
     lastname varchar(100) DEFAULT NULL,
     klasse varchar(10) DEFAULT NULL
   );
 
+  Thorsten,Böhm,5a
+  Chantalle,DeJaques,5a
+  Karsten,Dörfler,5a
+  Alice,Dotzler,6a
+  Hans-Peter,Fleckenstein,6a
+  Gudrun Nadja,Fleischinger,6a
+
    CREATE TABLE essen (
     id INT(6) AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150),
-    tag VARCHAR(150),
+    tag VARCHAR(15),
+    typ VARCHAR(15),
     beschreibung LONGTEXT
   );
 
@@ -204,7 +212,7 @@ function getEndDateOfWeek(w, y) {
 async function loadStudentData() {
   globalShowLoader("loaderDIV");
   resetDataTable("dataTable");
-  CURRENT_TABLE_NAME = "students";
+  CURRENT_TABLE_NAME = "schueler";
   let loadStudentQuery = "SELECT id, firstname, lastname FROM " + CURRENT_TABLE_NAME + " WHERE klasse = '" + CURRENCT_KLASSE + "' ORDER BY lastname;";
 
   await (async () => {

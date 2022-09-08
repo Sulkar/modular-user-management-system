@@ -6,7 +6,8 @@
   CREATE TABLE essen (
     id INT(6) AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150),
-    tag VARCHAR(150),
+    tag VARCHAR(15),
+    typ VARCHAR(15),
     beschreibung LONGTEXT
   );
 */

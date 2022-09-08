@@ -222,19 +222,30 @@ document.getElementById("selectTables").addEventListener("change", function () {
 //Modal: import data button
 document.getElementById("btnImportDataModal").addEventListener("click", function () {
   let dataToImport = document.getElementById("txtImportData").value;
-
-  //prepare columns Array for sql statement
-  let valuesArray = dataToImport
-    .split(",")
-    .map((value) => value.trimLeft().trimRight())
-    .map((value) => `'${value}'`);
+  let dataToImportRows = dataToImport.split("\n");
+  let valueArrays = [];
+  //prepare data for sql statement
+  dataToImportRows.forEach((row) => {
+    let rowArray = row
+      .split(",")
+      .map((value) => value.trimLeft().trimRight())
+      .map((value) => `'${value}'`);
+    valueArrays.push(rowArray);
+  });
 
   let columnsArray = CURRENT_COLUMN_NAMES.filter((columnName) => {
     return columnName != "id";
   });
 
   //create dynamic sql statement based on current table
-  let importQuery = "INSERT INTO " + CURRENT_TABLE_NAME + " (" + columnsArray.join(",") + ") VALUES (" + valuesArray.join(",") + ")";
+  let importQuery = "INSERT INTO " + CURRENT_TABLE_NAME + " (" + columnsArray.join(",") + ") VALUES ";
+  valueArrays.forEach((row, index) => {
+    if (valueArrays.length - 1 == index) {
+      importQuery += "(" + row.join(",") + ");";
+    } else {
+      importQuery += "(" + row.join(",") + "),";
+    }
+  });
 
   console.log(importQuery);
   (async () => {

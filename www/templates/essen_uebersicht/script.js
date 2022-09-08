@@ -2,7 +2,7 @@
   Essen Übersicht Page Javascript
   required tables:
   - schueler_essen
-  - students
+  - schueler
   - essen  
 
   CREATE TABLE schueler_essen (
@@ -13,17 +13,18 @@
     UNIQUE KEY schueler_essen_UN (schueler_id, tag)
   );
 
-  CREATE TABLE students (
+  CREATE TABLE schueler (
     id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     firstname varchar(100) DEFAULT NULL,
     lastname varchar(100) DEFAULT NULL,
     klasse varchar(10) DEFAULT NULL
   );
 
-   CREATE TABLE essen (
+  CREATE TABLE essen (
     id INT(6) AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150),
-    tag VARCHAR(150),
+    tag VARCHAR(15),
+    typ VARCHAR(15),
     beschreibung LONGTEXT
   );
 
@@ -155,12 +156,12 @@ function showEssenUebersicht() {
   essenUbersichtTable += "</tr>";
 
   //gesamt Schüler
-  essenUbersichtTable += "<tr>";
+  /*essenUbersichtTable += "<tr>";
   essenUbersichtTable += "<td style='font-weight: bolder;'>Anzahl Schüler</td>";
   essenUbersichtTable += "<td></td>";
   let gesamtAnzahlSchueler = getSchuelerAnzahl(CURRENCT_KLASSE);
   essenUbersichtTable += "<td style='font-weight: bolder;'>" + gesamtAnzahlSchueler + "</td>";
-  essenUbersichtTable += "</tr>";
+  essenUbersichtTable += "</tr>";*/
 
   essenUbersichtTable += "</tbody><br>";
   dataTableUebersicht.innerHTML = essenUbersichtTable;
@@ -206,7 +207,7 @@ async function addEssenCountToEssen(essenCountData) {
 
 async function loadClassesData() {
   globalShowLoader("loaderDIV");
-  CURRENT_TABLE_NAME = "students";
+  CURRENT_TABLE_NAME = "schueler";
   let loadClassesQuery = "SELECT COUNT(id) AS 'schueler_gesamt', klasse FROM " + CURRENT_TABLE_NAME + " GROUP BY klasse";
 
   await (async () => {
@@ -375,7 +376,7 @@ function getEndDateOfWeek(w, y) {
 async function loadStudentData() {
   globalShowLoader("loaderDIV");
   resetDataTable("dataTable");
-  CURRENT_TABLE_NAME = "students";
+  CURRENT_TABLE_NAME = "schueler";
   let loadStudentQuery = "SELECT id, firstname, lastname FROM " + CURRENT_TABLE_NAME + " WHERE klasse = '" + CURRENCT_KLASSE + "' ORDER BY lastname;";
 
   await (async () => {
