@@ -11,6 +11,7 @@ let SELECTED_WEEK_NR = undefined;
 let SELECTED_WEEK_START = undefined;
 let SELECTED_WEEK_END = undefined;
 let DAYS = ["Mo", "Di", "Mi", "Do"];
+let DAYS_FOR_PREPARATION = 4;
 
 let CURRENCT_KLASSE = "Alle Klassen";
 let CURRENT_STUDENTS = [];
@@ -44,14 +45,17 @@ $("#btnDrucken").on("click", function () {
 
 function setLastEditDay() {
   let lastEditDay = getLastEditDay();
-  lastEditDay = lastEditDay.toLocaleDateString("de-DE", { month: "2-digit", day: "2-digit", year: "numeric" });
-  $("#letzterBestelltag").html("Letzte Bestellmöglichkeit: " + lastEditDay);
+  let currentDay = new Date();
+
+  if (currentDay < lastEditDay)
+    $("#letzterBestelltag").html("<span class='newOption'>Letzte Bestellmöglichkeit: " + lastEditDay.toLocaleDateString("de-DE", { month: "2-digit", day: "2-digit", year: "numeric" }) + "</span>");
+  else $("#letzterBestelltag").html("<span class='oldOption'>Letzte Bestellmöglichkeit: " + lastEditDay.toLocaleDateString("de-DE", { month: "2-digit", day: "2-digit", year: "numeric" }) + "</span>");
 }
 
 function getLastEditDay() {
   //firstDayOfWeek - 4 = Montag - 4 = Donnerstag
   let lastEditDay = new Date(SELECTED_WEEK_START);
-  lastEditDay.setDate(lastEditDay.getDate() - 4);
+  lastEditDay.setDate(lastEditDay.getDate() - DAYS_FOR_PREPARATION);
   return lastEditDay;
 }
 
@@ -267,28 +271,80 @@ function fillSelectWithWeeks() {
   //console.log("last week number: " + lastDateWeekNumber);
 
   //create wochen datum data
-  let data = [];
+  let weekData = [];
   const optionsStart = { month: "2-digit", day: "2-digit" };
   const optionsEnd = { month: "2-digit", day: "2-digit", year: "numeric" };
   for (let i = 0; i < lastDateWeekNumber; i++) {
-    let start = getStartDateOfWeek(i + 1, 2022).toLocaleDateString("de-DE", optionsStart);
-    let end = getEndDateOfWeek(i + 1, 2022).toLocaleDateString("de-DE", optionsEnd);
-    data.push({ wochennr: i + 1, woche: "(" + (i + 1) + ". KW)", start: start, end: end });
+    let start = getStartDateOfWeek(i + 1, 2022); //.toLocaleDateString("de-DE", optionsStart);
+    let end = getEndDateOfWeek(i + 1, 2022); //.toLocaleDateString("de-DE", optionsEnd);
+    weekData.push({ wochennr: i + 1, woche: "(" + (i + 1) + ". KW)", start: start, end: end });
   }
+
+  let nextEditWeekStart = getNextEditWeekStart(weekData);
+
+  //set globals
+  SELECTED_WEEK_NR = currentWeekNumber;
+  SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(currentWeekNumber, 2022)); //-> wird für lastEditDay verwendet
+  SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(currentWeekNumber, 2022));
 
   //fill select with values
-  $("#selectEssenUebersichtWoche").append('<option value="' + 0 + '">Alle Wochen anzeigen </option>');
-  for (var index = 0; index < data.length; index++) {
-    $("#selectEssenUebersichtWoche").append('<option value="' + data[index].wochennr + '">' + data[index].woche + " " + data[index].start + " - " + data[index].end + "</option>");
+  $("#selectEssenVerwaltenWoche").append('<option value="' + 0 + '">Alle Wochen anzeigen </option>');
+  for (var index = 0; index < weekData.length; index++) {
+    if (weekData[index].start < nextEditWeekStart) {
+      $("#selectEssenVerwaltenWoche").append(
+        '<option class="oldOption" value="' +
+          weekData[index].wochennr +
+          '">' +
+          weekData[index].woche +
+          " " +
+          weekData[index].start.toLocaleDateString("de-DE", optionsStart) +
+          " - " +
+          weekData[index].end.toLocaleDateString("de-DE", optionsEnd) +
+          "</option>"
+      );
+    } else if (weekData[index].start >= nextEditWeekStart) {
+      $("#selectEssenVerwaltenWoche").append(
+        '<option class="newOption" value="' +
+          weekData[index].wochennr +
+          '">' +
+          weekData[index].woche +
+          " " +
+          weekData[index].start.toLocaleDateString("de-DE", optionsStart) +
+          " - " +
+          weekData[index].end.toLocaleDateString("de-DE", optionsEnd) +
+          "</option>"
+      );
+    } else {
+      $("#selectEssenVerwaltenWoche").append(
+        '<option value="' +
+          weekData[index].wochennr +
+          '">' +
+          weekData[index].woche +
+          " " +
+          weekData[index].start.toLocaleDateString("de-DE", optionsStart) +
+          " - " +
+          weekData[index].end.toLocaleDateString("de-DE", optionsEnd) +
+          "</option>"
+      );
+    }
   }
-  $("#selectEssenUebersichtWoche option[value='" + currentWeekNumber + "']").prop("selected", true);
-  $("#selectEssenUebersichtWoche option[value='" + currentWeekNumber + "']").addClass("currentOption");
-  SELECTED_WEEK_NR = currentWeekNumber;
-  SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(currentWeekNumber, 2022));
-  SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(currentWeekNumber, 2022));
+  $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "']").prop("selected", true);
+  $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "']").addClass("currentOption");
 }
 
-$("#selectEssenUebersichtWoche").on("change", function () {
+function getNextEditWeekStart(weekData) {
+  let currentDate = new Date();
+  let nextEditWeekStart = undefined;
+  for (let index = 0; index < weekData.length; index++) {
+    if (weekData[index].start > addDays(currentDate, DAYS_FOR_PREPARATION)) {
+      nextEditWeekStart = weekData[index].start;
+      break;
+    }
+  }
+  return nextEditWeekStart;
+}
+
+$("#selectEssenVerwaltenWoche").on("change", function () {
   let selectedWeek = this.value;
   SELECTED_WEEK_NR = this.value;
   if (selectedWeek == 0) {
@@ -323,6 +379,12 @@ function formatDateForSql(date) {
 function addDays(date, days) {
   var result = new Date(date);
   result.setDate(result.getDate() + days);
+  return result;
+}
+
+function subtractDays(date, days) {
+  var result = new Date(date);
+  result.setDate(result.getDate() - days);
   return result;
 }
 

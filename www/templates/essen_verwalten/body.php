@@ -6,14 +6,19 @@
 
         </div>
         <div class="row text-center">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <select class="form-select" id="selectEssenVerwaltenWoche" aria-label="Default select example">
 
                 </select>
             </div>
             <div class="col-md-4">
+                <span id="letzterBestelltag"></span>
+            </div>
+            
+            <div class="col-md-2">
                 <button type="button" class="btn btn-success noPrint" id="btnCreateNewEssen" data-bs-toggle="modal" data-bs-target="#modalEssenAnlegen">Essen anlegen</button>
             </div>
+
             <div class="col-md-2">
                 <button type="button" class="btn btn-success noPrint" id="btnDrucken">drucken</button>
             </div>

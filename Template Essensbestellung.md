@@ -47,6 +47,13 @@ Bei der Essensübersicht hat ein eingeloggter `user` mit der `role = admin` die 
 ```
 
 ### Testdaten für die Datenbank
+Für Tabelle: users (Passwort ist gleich Accountname bzw. lehrer)
+```
+admin, $2y$10$eS3SdECgnIYkl1x8PkTmIO2Mlu4KcqvwxCTuM79JJAIu41OvgpJIO, admin@example.com, , admin
+mensa, $2y$10$3OQnW79602Y1mfUxrrxtyuE4.S7/oz2ushlpebodZsO6TcotTLjPu, mensa@example.com, , mensa
+lehrer5a, $2y$10$oQTqVSGUtwIAukyNGsW/yOlgLIQRebShbfiByik.Of64x5B9AJEkO, lehrer@example.com, 5a, lehrer
+lehrer6a, $2y$10$oQTqVSGUtwIAukyNGsW/yOlgLIQRebShbfiByik.Of64x5B9AJEkO, lehrer@example.com, 6a, lehrer
+```
 Für Tabelle: essen
 ```
 Gulaschsuppe, 2022-09-19, fleisch, 

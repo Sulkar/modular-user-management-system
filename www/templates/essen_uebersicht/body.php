@@ -7,7 +7,7 @@
         </div>
         <div class="row text-center">
             <div class="col-md-4">
-                <select class="form-select" id="selectEssenUebersichtWoche" aria-label="Default select example">
+                <select class="form-select" id="selectEssenVerwaltenWoche" aria-label="Default select example">
 
                 </select>
             </div>

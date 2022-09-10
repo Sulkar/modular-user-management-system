@@ -1,3 +1,10 @@
 .currentOption{
     font-weight: bolder;
 }
+.oldOption{
+    color: red;
+}
+
+.newOption{
+    color: green;
+}
