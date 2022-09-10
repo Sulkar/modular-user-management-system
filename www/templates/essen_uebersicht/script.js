@@ -1,33 +1,5 @@
 /*
   Essen Übersicht Page Javascript
-  required tables:
-  - schueler_essen
-  - schueler
-  - essen  
-
-  CREATE TABLE schueler_essen (
-    id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    schueler_id int(11),
-    essen_id int(11),
-    tag varchar(15),
-    UNIQUE KEY schueler_essen_UN (schueler_id, tag)
-  );
-
-  CREATE TABLE schueler (
-    id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    firstname varchar(100) DEFAULT NULL,
-    lastname varchar(100) DEFAULT NULL,
-    klasse varchar(10) DEFAULT NULL
-  );
-
-  CREATE TABLE essen (
-    id INT(6) AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(150),
-    tag VARCHAR(15),
-    typ VARCHAR(15),
-    beschreibung LONGTEXT
-  );
-
 */
 
 //global variables

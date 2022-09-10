@@ -30,8 +30,11 @@ You can find templates in /www/templates/. The following templates are currently
 ### Profile Page
 ![](./www/images/info2.png)
 
-### Data Page
+### SQL Page
 ![](./www/images/info3.png)
+
+### Data Page
+![](./www/images/info4.png)
 
 ## Infos
 - [https://www.sitepoint.com/docker-php-development-environment/](https://www.sitepoint.com/docker-php-development-environment/)
