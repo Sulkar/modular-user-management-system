@@ -1,10 +1,14 @@
-.currentOption{
-    font-weight: bolder;
+.currentOption {
+  font-weight: bolder;
 }
-.oldOption{
-    color: red;
+.oldOption {
+  color: red;
 }
 
-.newOption{
-    color: green;
+.newOption {
+  color: green;
+}
+
+#dataTable {
+  table-layout: fixed;
 }

@@ -1,10 +1,15 @@
-.currentOption{
+.currentOption {
     font-weight: bolder;
-}
-.oldOption{
+  }
+  .oldOption {
     color: red;
-}
-
-.newOption{
+  }
+  
+  .newOption {
     color: green;
-}
+  }
+  
+  #dataTable {
+    table-layout: fixed;
+  }
+  

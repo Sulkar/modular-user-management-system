@@ -1,6 +1,5 @@
 /*
   Essen verwalten Page Javascript
-
 */
 
 //global variables
@@ -11,9 +10,11 @@ let UPDATE_VALUES = [];
 let DELETE_VALUES = [];
 let CURRENT_EDIT_ESSEN_ID = undefined;
 
+let SELECTED_WEEK_NR = undefined;
 let SELECTED_WEEK_START = undefined;
 let SELECTED_WEEK_END = undefined;
 let DAYS_FOR_PREPARATION = 4;
+let WEEK_SELECTION_START_MONTH = 9;
 
 //start
 $(document).ready(function () {
@@ -79,40 +80,54 @@ function resizeImage(file, elementId) {
   };
 }
 
+function getWeekNumber(date) {
+  let tdt = new Date(date.valueOf());
+  let dayn = (date.getDay() + 6) % 7;
+  tdt.setDate(tdt.getDate() - dayn + 3);
+  let firstThursday = tdt.valueOf();
+  tdt.setMonth(0, 1);
+  if (tdt.getDay() !== 4) {
+    tdt.setMonth(0, 1 + ((4 - tdt.getDay() + 7) % 7));
+  }
+  return 1 + Math.ceil((firstThursday - tdt) / 604800000);
+}
+
 function fillSelectWithWeeks() {
   let currentDate = new Date();
-  let firstDateInCurrentYear = new Date(currentDate.getFullYear(), 0, 1);
-  let lastDateInCurrentYear = new Date(currentDate.getFullYear(), 11, 31);
-  //console.log("last Date current year: " + lastDateInCurrentYear);
-  //console.log("first Date current year: " + firstDateInCurrentYear);
-  var daysFromFirstDate = Math.floor((currentDate - firstDateInCurrentYear) / (24 * 60 * 60 * 1000));
-  var daysFromLastDate = Math.floor((lastDateInCurrentYear - firstDateInCurrentYear) / (24 * 60 * 60 * 1000));
-
-  let firstDateWeekNumber = 1;
-  var currentWeekNumber = Math.ceil(daysFromFirstDate / 7);
-  let lastDateWeekNumber = Math.ceil(daysFromLastDate / 7);
-
-  // Display the calculated result
-  //console.log("first week number: " + firstDateWeekNumber);
-  //console.log("current week number: " + currentWeekNumber);
-  //console.log("last week number: " + lastDateWeekNumber);
+  var currentWeekNumber = getWeekNumber(currentDate);
 
   //create wochen datum data
-  let weekData = [];
   const optionsStart = { month: "2-digit", day: "2-digit" };
   const optionsEnd = { month: "2-digit", day: "2-digit", year: "numeric" };
-  for (let i = 0; i < lastDateWeekNumber; i++) {
-    let start = getStartDateOfWeek(i + 1, 2022); //.toLocaleDateString("de-DE", optionsStart);
-    let end = getEndDateOfWeek(i + 1, 2022); //.toLocaleDateString("de-DE", optionsEnd);
-    weekData.push({ wochennr: i + 1, woche: "(" + (i + 1) + ". KW)", start: start, end: end });
+
+  let weekData = [];
+  let startYear = undefined;
+  if (currentDate.getMonth() < WEEK_SELECTION_START_MONTH - 1) {
+    startYear = currentDate.getFullYear() - 1;
+  } else {
+    startYear = currentDate.getFullYear();
+  }
+  let startMonthDate = new Date(startYear, WEEK_SELECTION_START_MONTH - 1, 1);
+  let tempWeekNr = getWeekNumber(startMonthDate);
+
+  for (let i = 0; i < 52; i++) {
+    if (tempWeekNr > 52) {
+      tempWeekNr = 1;
+      startYear++;
+    }
+
+    let start = getStartDateOfWeek(tempWeekNr, startYear); //.toLocaleDateString("de-DE", optionsStart);
+    let end = getEndDateOfWeek(tempWeekNr, startYear); //.toLocaleDateString("de-DE", optionsEnd);
+    weekData.push({ wochennr: tempWeekNr, year: startYear, woche: "(" + tempWeekNr + ". KW)", start: start, end: end });
+    tempWeekNr++;
   }
 
   let nextEditWeekStart = getNextEditWeekStart(weekData);
 
   //set globals
   SELECTED_WEEK_NR = currentWeekNumber;
-  SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(currentWeekNumber, 2022)); //-> wird für lastEditDay verwendet
-  SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(currentWeekNumber, 2022));
+  SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(currentWeekNumber, currentDate.getFullYear())); //-> wird für lastEditDay verwendet
+  SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(currentWeekNumber, currentDate.getFullYear()));
 
   //fill select with values
   $("#selectEssenVerwaltenWoche").append('<option value="' + 0 + '">Alle Wochen anzeigen </option>');
@@ -121,6 +136,8 @@ function fillSelectWithWeeks() {
       $("#selectEssenVerwaltenWoche").append(
         '<option class="oldOption" value="' +
           weekData[index].wochennr +
+          "_" +
+          weekData[index].year +
           '">' +
           weekData[index].woche +
           " " +
@@ -133,6 +150,8 @@ function fillSelectWithWeeks() {
       $("#selectEssenVerwaltenWoche").append(
         '<option class="newOption" value="' +
           weekData[index].wochennr +
+          "_" +
+          weekData[index].year +
           '">' +
           weekData[index].woche +
           " " +
@@ -145,6 +164,8 @@ function fillSelectWithWeeks() {
       $("#selectEssenVerwaltenWoche").append(
         '<option value="' +
           weekData[index].wochennr +
+          "_" +
+          weekData[index].year +
           '">' +
           weekData[index].woche +
           " " +
@@ -155,8 +176,8 @@ function fillSelectWithWeeks() {
       );
     }
   }
-  $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "']").prop("selected", true);
-  $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "']").addClass("currentOption");
+  $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "_" + currentDate.getFullYear() + "']").prop("selected", true);
+  $("#selectEssenVerwaltenWoche option[value='" + currentWeekNumber + "_" + currentDate.getFullYear() + "']").addClass("currentOption");
 }
 
 function getNextEditWeekStart(weekData) {
@@ -172,14 +193,17 @@ function getNextEditWeekStart(weekData) {
 }
 
 $("#selectEssenVerwaltenWoche").on("change", function () {
-  let selectedWeek = this.value;
+  let selectedWeek = this.value.split("_")[0];
+  let selectedYear = this.value.split("_")[1];
+  SELECTED_WEEK_NR = this.value.split("_")[0];
+  
   if (selectedWeek == 0) {
     let currentDate = new Date();
     SELECTED_WEEK_START = formatDateForSql(new Date(currentDate.getFullYear(), 0, 1));
     SELECTED_WEEK_END = formatDateForSql(new Date(currentDate.getFullYear(), 11, 31));
   } else {
-    SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(selectedWeek, 2022));
-    SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(selectedWeek, 2022));
+    SELECTED_WEEK_START = formatDateForSql(getStartDateOfWeek(selectedWeek, selectedYear));
+    SELECTED_WEEK_END = formatDateForSql(getEndDateOfWeek(selectedWeek, selectedYear));
   }
   loadDataData();
   setLastEditDay();
