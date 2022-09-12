@@ -35,6 +35,7 @@ $sqlDrop = false;
 $sqlCreate = false;
 $sqlAlter = false;
 $sqlInsert = false;
+$sqlDelete = false;
 
 $regex_select = "/\bselect\b/i";
 if (preg_match($regex_select, $sqlQuery) == 1) $sqlSelect = true;
@@ -50,11 +51,13 @@ $regex_alter = "/\balter\b/i";
 if (preg_match($regex_alter, $sqlQuery) == 1) $sqlAlter = true;
 $regex_insert = "/\binsert\b/i";
 if (preg_match($regex_insert, $sqlQuery) == 1) $sqlInsert = true;
+$regex_delete = "/\bdelete\b/i";
+if (preg_match($regex_delete, $sqlQuery) == 1) $sqlDelete = true;
 
 
 //2) check for role privilegs
 $denyError = "";
-if ($sqlCreate) {
+if ($sqlCreate || $sqlDelete) {
     if (in_array($_SESSION["role"], array("admin"))) {
         $userHasPermission = true;
     } else {

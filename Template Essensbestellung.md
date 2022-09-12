@@ -21,7 +21,10 @@ Bei der Essensbestellung für eine Klasse wird aus der allgemeinen `user`-Tabell
 
 Bei der Essensübersicht hat ein eingeloggter `user` mit der `role = admin` die Möglichkeit, für alle Klassen Essen zu bestellen.
 
-```sql  
+```sql 
+
+
+
   CREATE TABLE schueler_essen (
     id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     schueler_id int(11),
