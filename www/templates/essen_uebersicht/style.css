@@ -10,6 +10,9 @@
   }
   
   #dataTable {
-   /* table-layout: fixed;*/
+   table-layout: fixed;
   }
   
+  .btnEssenAbgeholt{
+    width: 100%;
+  }

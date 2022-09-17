@@ -11,7 +11,7 @@ let SELECTED_WEEK_NR = undefined;
 let SELECTED_WEEK_START = undefined;
 let SELECTED_WEEK_END = undefined;
 let DAYS = ["Mo", "Di", "Mi", "Do"];
-let DAYS_FOR_PREPARATION = 4;
+let DAYS_FOR_PREPARATION = 5;
 let WEEK_SELECTION_START_MONTH = 9;
 
 let CURRENCT_KLASSE = "Alle Klassen";
@@ -20,6 +20,7 @@ let CURRENT_ESSEN_DATA = [];
 let CURRENT_KLASSEN_DATA = [];
 
 let CURRENT_USER_ROLE = undefined;
+let MODE_UEBERSICHT = false;
 
 //start
 $(document).ready(function () {
@@ -31,6 +32,25 @@ $(document).ready(function () {
       setLastEditDay();
     });
   });
+});
+
+$("#switchAusgabeUebersicht").on("click", function () {
+  let tempSwitch = $(this);
+  let labelForTempSwitch = $("label[for='" + $(this).attr("id") + "']");
+  if (tempSwitch.is(":checked")) {
+    labelForTempSwitch.text("Übersicht");
+    MODE_UEBERSICHT = true;
+  } else {
+    labelForTempSwitch.text("Ausgabe");
+    MODE_UEBERSICHT = false;
+  }
+  //update view
+  if (CURRENCT_KLASSE == "Alle Klassen") {
+    initData("alle");
+  } else {
+    initData("klasse");
+  }
+  setLastEditDay();
 });
 
 $("#btnDrucken").on("click", function () {
@@ -80,17 +100,50 @@ async function loadStudentEssenData() {
     globalHideLoader("loaderDIV");
     if (data["error"] == "") {
       CURRENT_TABLE_VALUES = data["result"];
-      addStudentEssenToTable();
+      if (MODE_UEBERSICHT) updateRadiosStudentEssenToTable();
+      else addStudentEssenToTable();
     } else {
       globalShowError(data["error"]["errorInfo"]);
     }
   })();
 }
 
-function addStudentEssenToTable() {
+function updateRadiosStudentEssenToTable() {
   CURRENT_TABLE_VALUES.forEach((schuelerEssen) => {
     $("#radioId_" + schuelerEssen.essen_id + "_" + schuelerEssen.tag + "_" + schuelerEssen.schueler_id).prop("checked", true);
   });
+}
+
+function addStudentEssenToTable() {
+  CURRENT_TABLE_VALUES.forEach((schuelerEssen) => {
+    let tempButtonId = "buttonId_" + schuelerEssen.schueler_id + "_" + schuelerEssen.tag;
+    if (schuelerEssen.essen_id == 0) {
+      $("#" + schuelerEssen.schueler_id + "_" + schuelerEssen.tag).prepend("kein Essen<br>");
+      $("#" + tempButtonId).removeClass("d-none");
+    } else {
+      $("#spanId_" + schuelerEssen.essen_id + "_" + schuelerEssen.tag + "_" + schuelerEssen.schueler_id).removeClass("d-none");
+      $("#spanId_" + schuelerEssen.essen_id + "_" + schuelerEssen.tag + "_" + schuelerEssen.schueler_id).append("<br>");
+      $("#" + tempButtonId).removeClass("d-none");
+    }
+    changeEssenAbgeholtButtonStatus(tempButtonId, schuelerEssen.status);
+  });
+}
+
+function changeEssenAbgeholtButtonStatus(buttonId, status) {
+  //status 1 = abgeholt - grün
+  if (status == 1) {
+    $("#" + buttonId).data("status", "abgeholt");
+    $("#" + buttonId).removeClass("btn-secondary");
+    $("#" + buttonId).addClass("btn-success");
+    $("#" + buttonId).html("abgeholt");
+  }
+  //status 2 = nicht abgeholt - rot
+  else if (status == 2) {
+    $("#" + buttonId).data("status", "nicht_abgeholt");
+    $("#" + buttonId).removeClass("btn-secondary");
+    $("#" + buttonId).addClass("btn-danger");
+    $("#" + buttonId).html("nicht abgeholt");
+  }
 }
 
 function showEssenUebersicht() {
@@ -444,6 +497,7 @@ async function loadStudentData() {
       CURRENT_TABLE_VALUES = data["result"];
       CURRENT_STUDENTS = CURRENT_TABLE_VALUES;
       createEssenDataTable("dataTable", CURRENT_TABLE_VALUES, CURRENT_COLUMN_NAMES);
+      if (!MODE_UEBERSICHT) initEssenAbgeholtButtons();
     } else {
       globalShowError(data["error"]["errorInfo"]);
     }
@@ -523,7 +577,11 @@ function createEssenDataTable(tableId, dataValues, columnNames) {
       let sqlFormatDate = formatDateForSql(dayDateMap[day]);
       //add combo
       essenTable += "<td class='" + sqlFormatDate + "' id='" + currentStudentId + "_" + sqlFormatDate + "'>";
-      essenTable += createKeinEssenRadio(sqlFormatDate, currentStudentId);
+
+      if (MODE_UEBERSICHT) essenTable += createKeinEssenRadio(sqlFormatDate, currentStudentId);
+      else essenTable += createEssenAbgeholtButton(sqlFormatDate, currentStudentId);
+      //
+
       essenTable += "</td>";
     });
 
@@ -532,6 +590,37 @@ function createEssenDataTable(tableId, dataValues, columnNames) {
   essenTable += "</tbody>";
 
   $("#" + tableId).append(essenTable);
+}
+function initEssenAbgeholtButtons() {
+  //add on click button essen abgeholt
+  $(".btnEssenAbgeholt").on("click", function () {
+    let studentId = $(this).attr("id").split("_")[1];
+    let essenTag = $(this).attr("id").split("_")[2];
+    let currentButtonStatus = 0;
+
+    let tempButtonStatus = $(this).data("status");
+    if (tempButtonStatus == "start") {
+      $(this).data("status", "abgeholt");
+      $(this).removeClass("btn-secondary");
+      $(this).addClass("btn-success");
+      $(this).html("abgeholt");
+      currentButtonStatus = 1;
+    } else if (tempButtonStatus == "abgeholt") {
+      $(this).data("status", "nicht_abgeholt");
+      $(this).removeClass("btn-success");
+      $(this).addClass("btn-danger");
+      $(this).html("nicht abgeholt");
+      currentButtonStatus = 2;
+    } else if (tempButtonStatus == "nicht_abgeholt") {
+      $(this).data("status", "start");
+      $(this).removeClass("btn-danger");
+      $(this).addClass("btn-secondary");
+      $(this).html("offen");
+      currentButtonStatus = 0;
+    }
+
+    updateEssenStatus(studentId, essenTag, currentButtonStatus);
+  });
 }
 
 function initRadioEvents() {
@@ -566,6 +655,11 @@ function fillModalEssenAnzeigenWithData(essenData) {
   $("#modalEssenAnzeigen_Beschreibung").html(essenData.beschreibung);
 }
 
+function createEssenAbgeholtButton(sqlFormatDate, currentStudentId) {
+  let essenAbgeholtButton = "<button type='button' class='btn btn-secondary btnEssenAbgeholt d-none' data-status='start' id='buttonId_" + currentStudentId + "_" + sqlFormatDate + "'>offen</button>";
+  return essenAbgeholtButton;
+}
+
 function createKeinEssenRadio(sqlFormatDate, studentId) {
   let essenId = 0;
   let keinEssenRadio = "";
@@ -592,6 +686,25 @@ function createEssenRadio(essen, studentId) {
   }
   essenRadio += " <a class='essenModalLink' id='essenId_" + essen.id + "' href='#' data-bs-toggle='modal' data-bs-target='#modalEssenAnzeigen'>" + essen.name + "</a>";
   return essenRadio;
+}
+function addEssenToTd(essen, studentId) {
+  let essenSpan = "";
+  essenSpan += "<span id='spanId_" + essen.id + "_" + essen.tag + "_" + studentId + "' class='d-none'";
+  essenSpan += " data-essenid='" + essen.id + "'>" + essen.name + "</span>";
+  return essenSpan;
+}
+
+async function updateEssenStatus(studentId, tag, status) {
+  let sqlQuery = "UPDATE schueler_essen SET status = " + status + " WHERE schueler_id = " + studentId + " AND tag = '" + tag + "'";
+
+  await (async () => {
+    let data = await globalDatabaseCRUD(sqlQuery);
+    if (data["error"] == "") {
+      // success
+    } else {
+      globalShowError(data["error"]["errorInfo"]);
+    }
+  })();
 }
 
 async function updateEssenAuswahl(studentId, essenId, tag) {
@@ -653,8 +766,8 @@ function addEssenToTable() {
     let dayTds = getTdsByDay(essen.tag);
     dayTds.forEach((dayTd) => {
       let tempStudentId = getStudentIdFromTd(dayTd);
-      $(dayTd).prepend("<br>");
-      $(dayTd).prepend(createEssenRadio(essen, tempStudentId));
+      if (MODE_UEBERSICHT) $(dayTd).prepend(createEssenRadio(essen, tempStudentId) + "<br>");
+      else $(dayTd).prepend(addEssenToTd(essen, tempStudentId));
     });
   });
   //

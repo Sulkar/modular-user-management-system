@@ -16,8 +16,15 @@
 
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <span id="letzterBestelltag"></span>
+            </div>
+            <div class="col-md-2" style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 10px;">
+                <br>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="switchAusgabeUebersicht" unchecked>
+                    <label class="form-check-label" for="switchAusgabeUebersicht">Ausgabe</label>
+                </div><br>
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn btn-success noPrint" id="btnDrucken">drucken</button>
@@ -27,15 +34,15 @@
         <br>
         <div class="row">
             <div class="col-md-12">
-                <table class="table" id="dataTableEssenUebersicht">
+                <table class="table table-striped" id="dataTable">
                 </table>
             </div>
 
         </div>
-        <br>
+
         <div class="row">
             <div class="col-md-12">
-                <table class="table" id="dataTable">
+                <table class="table table-striped" id="dataTableEssenUebersicht">
                 </table>
             </div>
         </div>

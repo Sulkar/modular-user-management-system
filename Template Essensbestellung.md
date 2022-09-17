@@ -30,6 +30,7 @@ Bei der Essensübersicht hat ein eingeloggter `user` mit der `role = admin` die 
     schueler_id int(11),
     essen_id int(11),
     tag varchar(15),
+    status int(5),
     UNIQUE KEY schueler_essen_UN (schueler_id, tag)
   );
 

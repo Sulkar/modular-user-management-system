@@ -14,7 +14,7 @@ let SELECTED_WEEK_NR = undefined;
 let SELECTED_WEEK_START = undefined;
 let SELECTED_WEEK_END = undefined;
 let DAYS = ["Mo", "Di", "Mi", "Do"];
-let DAYS_FOR_PREPARATION = 4;
+let DAYS_FOR_PREPARATION = 5;
 let WEEK_SELECTION_START_MONTH = 9;
 
 let CURRENCT_KLASSE = undefined;

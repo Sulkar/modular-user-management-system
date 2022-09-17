@@ -95,7 +95,8 @@ function createEditableDataTable(tableId, dataValues, columnNames) {
         dataTableBodyTr.appendChild(currentTd);
       } else {
         let currentTd = undefined;
-        if (item.length > 250) {
+
+        if (item != null && item.length > 250) {
           item = item.substring(0, 250);
           item += " ...";
           currentTd = globalCreateElement("td", { id: "id_" + index1 + "_" + index2, className: "wordBreakAll textTooLong" }, item);
