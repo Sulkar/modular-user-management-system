@@ -1,7 +1,16 @@
 .print {
   display: none;
 }
+
 @media print {
+
+  thead {
+    display: table-row-group;
+  }
+  tr {
+    page-break-inside: avoid;
+  }
+
   table {
     font-size: 12px;
   }

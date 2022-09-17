@@ -1,18 +1,24 @@
 .currentOption {
-    font-weight: bolder;
+  font-weight: bolder;
+}
+.oldOption {
+  color: red;
+}
+
+.newOption {
+  color: green;
+}
+
+#dataTable {
+  table-layout: fixed;
+}
+
+.btnEssenAbgeholt {
+  width: 100%;
+}
+
+@media print {
+  #uebersichtTables {
+    margin-top: -100px;
   }
-  .oldOption {
-    color: red;
-  }
-  
-  .newOption {
-    color: green;
-  }
-  
-  #dataTable {
-   table-layout: fixed;
-  }
-  
-  .btnEssenAbgeholt{
-    width: 100%;
-  }
+}

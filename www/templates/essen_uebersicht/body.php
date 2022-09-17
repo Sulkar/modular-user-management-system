@@ -21,7 +21,7 @@
             </div>
             <div class="col-md-2" style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 10px;">
                 <br>
-                <div class="form-check form-switch">
+                <div class="form-check form-switch noPrint">
                     <input class="form-check-input" type="checkbox" role="switch" id="switchAusgabeUebersicht" unchecked>
                     <label class="form-check-label" for="switchAusgabeUebersicht">Ausgabe</label>
                 </div><br>
@@ -32,18 +32,20 @@
         </div>
 
         <br>
-        <div class="row">
-            <div class="col-md-12">
-                <table class="table table-striped" id="dataTable">
-                </table>
+        <div id="uebersichtTables">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped" id="dataTable">
+                    </table>
+                </div>
+
             </div>
 
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <table class="table table-striped" id="dataTableEssenUebersicht">
-                </table>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped" id="dataTableEssenUebersicht">
+                    </table>
+                </div>
             </div>
         </div>
     </div>
