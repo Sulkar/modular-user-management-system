@@ -18,6 +18,9 @@ $("#btnSqlDeleteTable").on("click", function () {
 $("#btnSqlAlterColumn").on("click", function () {
   $("#txtSQLData").val("ALTER TABLE students MODIFY email TEXT;");
 });
+$("#btnSqlFindDuplicates").on("click", function () {
+  $("#txtSQLData").val("SELECT COUNT(*), firstname, lastname FROM students group by firstname, lastname\nHAVING count(*) > 1;");
+});
 
 //execute SQL Button
 document.getElementById("btnExecuteSQL").addEventListener("click", function () {

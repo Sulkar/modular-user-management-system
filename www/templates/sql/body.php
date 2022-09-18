@@ -16,7 +16,8 @@
                             <a href="#" id="btnSqlRemoveColumn">Remove Column</a> |
                             <a href="#" id="btnSqlCreateTable">Create Table</a> |
                             <a href="#" id="btnSqlDeleteTable">Delete Table</a> |
-                            <a href="#" id="btnSqlAlterColumn">Alter Column</a>
+                            <a href="#" id="btnSqlAlterColumn">Alter Column</a> |
+                            <a href="#" id="btnSqlFindDuplicates">Find Duplicates</a>
                         </div>
                     </div>
                     <div class="form-group">
