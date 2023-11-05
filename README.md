@@ -27,6 +27,7 @@ You can find templates in /www/templates/. The following templates are currently
 
 ## create DB users table
 
+Weitere für die Essensbestellung benötigte Tabelle und Daten findest du beim Template: [Essensbestellung](./Template%20Essensbestellung.md)
 ```sql
 
  CREATE TABLE users (

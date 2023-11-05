@@ -22,8 +22,14 @@ Bei der Essensbestellung für eine Klasse wird aus der allgemeinen `user`-Tabell
 Bei der Essensübersicht hat ein eingeloggter `user` mit der `role = admin` die Möglichkeit, für alle Klassen Essen zu bestellen.
 
 ```sql 
-
-
+ CREATE TABLE users (
+    id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username varchar(100) DEFAULT NULL,
+    password varchar(100) DEFAULT NULL,
+    email varchar(100) DEFAULT NULL,
+    klasse varchar(10) DEFAULT NULL, -- for Template Essensbestellung
+    role varchar(15) DEFAULT NULL
+  );
 
   CREATE TABLE schueler_essen (
     id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -52,14 +58,18 @@ Bei der Essensübersicht hat ein eingeloggter `user` mit der `role = admin` die 
 
 ### Testdaten für die Datenbank
 Für Tabelle: users (Passwort ist gleich Accountname bzw. lehrer)
-```
-admin, $2y$10$eS3SdECgnIYkl1x8PkTmIO2Mlu4KcqvwxCTuM79JJAIu41OvgpJIO, admin@example.com, , admin
-mensa, $2y$10$3OQnW79602Y1mfUxrrxtyuE4.S7/oz2ushlpebodZsO6TcotTLjPu, mensa@example.com, , mensa
-lehrer5a, $2y$10$oQTqVSGUtwIAukyNGsW/yOlgLIQRebShbfiByik.Of64x5B9AJEkO, lehrer@example.com, 5a, lehrer
-lehrer6a, $2y$10$oQTqVSGUtwIAukyNGsW/yOlgLIQRebShbfiByik.Of64x5B9AJEkO, lehrer@example.com, 6a, lehrer
+```sql
+INSERT INTO users (username, password, email, klasse, role)
+VALUES 
+('admin', '$2y$10$eS3SdECgnIYkl1x8PkTmIO2Mlu4KcqvwxCTuM79JJAIu41OvgpJIO', 'admin@example.com', '', 'admin'),
+('mensa', '$2y$10$3OQnW79602Y1mfUxrrxtyuE4.S7/oz2ushlpebodZsO6TcotTLjPu', 'mensa@example.com', '', 'mensa'),
+('lehrer5a', '$2y$10$oQTqVSGUtwIAukyNGsW/yOlgLIQRebShbfiByik.Of64x5B9AJEkO', 'lehrer@example.com', '5a', 'lehrer'),
+('lehrer6a', '$2y$10$oQTqVSGUtwIAukyNGsW/yOlgLIQRebShbfiByik.Of64x5B9AJEkO', 'lehrer@example.com', '6b', 'lehrer');
 ```
 Für Tabelle: essen
+- Du kannst auch aktuelle Einträge für Essen von ChatGPT erstellen lassen. Hier ein möglicher Prompt:
 ```
+1) Füge folgende Werte in eine Maria DB Tabelle "essen" mit folgenden Spalten "name", "tag", "typ", "beschreibung" ein: 
 Gulaschsuppe, 2022-09-19, fleisch, 
 Thai Curry, 2022-09-19, vegetarisch, 
 4 Mini-Bratwürstchen auf Sauerkraut, 2022-09-20, fleisch, 
@@ -68,15 +78,32 @@ Flammkuchen Speck und Zwiebeln, 2022-09-21, fleisch,
 Köfta mit Ratatouille, 2022-09-21, fleisch, 
 Burger, 2022-09-22, fleisch, 
 Tortilla Patatas, 2022-09-22, vegetarisch, 
+
+2) Erstelle weitere Essenseinträge für die Woche vom 6.11. bis 10.11.2023
+```
+
+```sql
+INSERT INTO essen (name, tag, typ, beschreibung)
+VALUES
+  ('Gulaschsuppe', '2022-09-19', 'fleisch', ''),
+  ('Thai Curry', '2022-09-19', 'vegetarisch', ''),
+  ('4 Mini-Bratwürstchen auf Sauerkraut', '2022-09-20', 'fleisch', ''),
+  ('Falafelbällchen auf Couscous', '2022-09-20', 'vegetarisch', ''),
+  ('Flammkuchen Speck und Zwiebeln', '2022-09-21', 'fleisch', ''),
+  ('Köfta mit Ratatouille', '2022-09-21', 'fleisch', ''),
+  ('Burger', '2022-09-22', 'fleisch', ''),
+  ('Tortilla Patatas', '2022-09-22', 'vegetarisch', '');
 ```
 Für Tabelle: schueler
-```
-Thorsten,Böhm,5a
-Chantalle,DeJaques,5a
-Karsten,Dörfler,5a
-Alice,Dotzler,6a
-Hans-Peter,Fleckenstein,6a
-Gudrun Nadja,Fleischinger,6a
+```sql
+INSERT INTO schueler (firstname, lastname, klasse)
+VALUES
+  ('Thorsten', 'Böhm', '5a'),
+  ('Chantalle', 'DeJaques', '5a'),
+  ('Karsten', 'Dörfler', '5a'),
+  ('Alice', 'Dotzler', '6a'),
+  ('Hans-Peter', 'Fleckenstein', '6a'),
+  ('Gudrun Nadja', 'Fleischinger', '6a');
 ```
 
 ## Pages

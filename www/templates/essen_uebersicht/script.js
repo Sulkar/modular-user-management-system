@@ -144,6 +144,13 @@ function changeEssenAbgeholtButtonStatus(buttonId, status) {
     $("#" + buttonId).addClass("btn-danger");
     $("#" + buttonId).html("nicht abgeholt");
   }
+  //status 3 = krank - orange
+  else if (status == 3) {
+    $("#" + buttonId).data("status", "krank");
+    $("#" + buttonId).removeClass("btn-secondary");
+    $("#" + buttonId).addClass("btn-warning");
+    $("#" + buttonId).html("🚑 krank");
+  }
 }
 
 function showEssenUebersicht() {
@@ -612,8 +619,14 @@ function initEssenAbgeholtButtons() {
       $(this).html("nicht abgeholt");
       currentButtonStatus = 2;
     } else if (tempButtonStatus == "nicht_abgeholt") {
-      $(this).data("status", "start");
+      $(this).data("status", "krank");
       $(this).removeClass("btn-danger");
+      $(this).addClass("btn-warning");
+      $(this).html("🚑 krank");
+      currentButtonStatus = 3;
+    } else if (tempButtonStatus == "krank") {
+      $(this).data("status", "start");
+      $(this).removeClass("btn-warning");
       $(this).addClass("btn-secondary");
       $(this).html("offen");
       currentButtonStatus = 0;
